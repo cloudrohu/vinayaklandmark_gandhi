@@ -1,0 +1,77 @@
+
+<!-- Bottom Fixed Floating Bar (Clean & Premium) -->
+<div class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-md">
+  <a href="{{settings_obj.linkexplore}}"  target="_blank"  rel="noopener noreferrer"  class="group relative flex items-center justify-between gap-4 bg-slate-900/90 backdrop-blur-xl border border-white/10 hover:border-amber-500/50 p-2.5 pl-4 rounded-full shadow-2xl transition-all duration-300 hover:shadow-amber-500/10 hover:-translate-y-0.5">
+    
+    <!-- Left: Icon + Text -->
+    <div class="flex items-center gap-3 min-w-0">
+      <!-- Icon Container -->
+      <div class="flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 text-slate-950 shadow-md group-hover:scale-105 transition-transform duration-300">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </div>
+
+      <!-- Content -->
+      <div class="flex flex-col truncate">
+        <div class="flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          {% if settings_obj.footer_link_text %}
+            <span class="text-[10px] font-semibold uppercase tracking-wider text-amber-400/90">{{ settings_obj.footer_link_text }}</span>
+          {% else %}
+            <span class="text-[10px] font-semibold uppercase tracking-wider text-amber-400/90">3D Virtual Tour</span>
+          {% endif %}
+        </div>
+        <span class="text-xs font-bold text-slate-100 truncate group-hover:text-amber-300 transition-colors">
+          {{project_obj.project_name}}
+        </span>
+      </div>
+    </div>
+
+    <!-- Right: Action Button -->
+    <div class="flex-shrink-0 flex items-center gap-1 bg-amber-500 text-slate-950 font-bold text-xs px-3.5 py-2 rounded-full group-hover:bg-amber-400 transition-colors">
+      <span>Explore</span>
+      <svg class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+      </svg>
+    </div>
+
+  </a>
+</div>
+
+<!-- Footer -->
+<footer class="bg-neutral-950 text-white bottom-0">
+
+    <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="py-5 sm:py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+
+            <!-- Copyright -->
+            <p class="text-[11px] sm:text-xs text-white/45 text-center sm:text-left">
+                © {{settings_obj.copy_right}} All Rights Reserved.
+            </p>
+
+
+            <!-- Links -->
+            <div class="flex items-center gap-4 sm:gap-6">
+
+                <a href="{% url "privacy_policy" %}" class="text-[11px] sm:text-xs text-white/45 hover:text-white transition-colors">
+                    Privacy Policy
+                </a>
+
+                <span class="w-px h-3 bg-white/10"></span>
+
+                <a href="{% url "disclaimer" %}" class="text-[11px] sm:text-xs text-white/45 hover:text-white transition-colors">
+                    Disclaimer
+                </a>
+
+            </div>
+
+
+
+        </div>
+
+    </div>
+
+</footer>
