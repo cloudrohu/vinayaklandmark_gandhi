@@ -1,5 +1,8 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from django.contrib import admin
+from django.db.models import OuterRef, Subquery
+
 
 
 from .models.website import (
@@ -15,9 +18,31 @@ from .models.website import (
     ImpactMetric,
     Gallery,
     USP,
-    Inquiry,
     PriceBreakupInquiry,
+    Inquiry,
+    EnquiryCalling
 )
+
+class EnquiryCallingInline(admin.TabularInline):
+    model = EnquiryCalling
+    extra = 0
+    can_delete = True
+
+    fields = (
+        "called_at",
+        "response",
+        "note",
+    )
+
+    readonly_fields = (
+        "called_at",
+    )
+
+    ordering = (
+        "-called_at",
+    )
+
+
 
 
 class BaseSettingInline(admin.StackedInline):
@@ -353,19 +378,229 @@ class EnquiryInline(BaseSettingInline):
 
     extra = 0
 
+from django.contrib import admin
+from django.db.models import OuterRef, Subquery,Count
 
+
+# =========================================================
+# ENQUIRY CALLING HISTORY INLINE
+# =========================================================
+
+class EnquiryCallingInline(admin.TabularInline):
+    model = EnquiryCalling
+
+    extra = 0
+    can_delete = True
+
+    fields = (
+        "called_at",
+        "note",
+    )
+
+    readonly_fields = (
+        "called_at",
+    )
+
+    ordering = (
+        "-called_at",
+    )
+
+
+# =========================================================
+# INQUIRY ADMIN
+# =========================================================
 
 @admin.register(Inquiry)
 class InquiryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'phone', 'email', 'project', 'created_at')
-    list_filter = ('created_at', 'project')
-    search_fields = ('name', 'phone', 'email', 'message')
-    readonly_fields = ('created_at',)
-    ordering = ('-created_at',)
 
-    # Lead records secure thevnyasaathi direct add/edit restrict karu shakta (optional)
-    def has_add_permission(self, request):
-        return False  # Leads fakta website form madhun yetil
+    change_list_template = "admin/core/inquiry/change_list.html"
+
+    # -----------------------------------------------------
+    # LIST DISPLAY
+    # -----------------------------------------------------
+
+    list_display = (
+        "name",
+        "phone",
+        "email",
+        "project",
+        "Enquiry_status",
+        "response_count",
+        "last_response",
+        "contacted_on",
+    )
+
+    list_display_links = (
+        "name",
+    )
+
+    # -----------------------------------------------------
+    # SEARCH
+    # -----------------------------------------------------
+
+    search_fields = (
+        "name",
+        "phone",
+        "email",
+        "project__project_name",
+    )
+
+    # -----------------------------------------------------
+    # FILTER
+    # -----------------------------------------------------
+
+    list_filter = (
+        "Enquiry_status",
+        "project",
+        "contacted_on",
+    )
+
+    # -----------------------------------------------------
+    # READONLY
+    # -----------------------------------------------------
+
+    readonly_fields = (
+        "created_at",
+        "contacted_on",
+    )
+
+    # -----------------------------------------------------
+    # ORDERING
+    # -----------------------------------------------------
+
+    ordering = (
+        "-contacted_on",
+    )
+
+    list_per_page = 30
+
+    # -----------------------------------------------------
+    # INLINE
+    # -----------------------------------------------------
+
+    inlines = [
+        EnquiryCallingInline,
+    ]
+
+    # =====================================================
+    # SAME PHONE NUMBER
+    # ONLY LATEST INQUIRY SHOW
+    # =====================================================
+
+    def get_queryset(self, request):
+
+        qs = super().get_queryset(request)
+
+        # -----------------------------------------
+        # SAME PHONE KI TOTAL INQUIRY COUNT
+        # -----------------------------------------
+
+        response_count_subquery = (
+            Inquiry.objects
+            .filter(
+                phone=OuterRef("phone")
+            )
+            .values("phone")
+            .annotate(
+                total=Count("id")
+            )
+            .values("total")[:1]
+        )
+
+        # -----------------------------------------
+        # SAME PHONE KI LATEST INQUIRY
+        # -----------------------------------------
+
+        latest_inquiry = (
+            Inquiry.objects
+            .filter(
+                phone=OuterRef("phone")
+            )
+            .order_by(
+                "-contacted_on",
+                "-id"
+            )
+            .values("id")[:1]
+        )
+
+        # -----------------------------------------
+        # SAME PHONE KI LATEST RESPONSE DATE
+        # -----------------------------------------
+
+        last_response_subquery = (
+            Inquiry.objects
+            .filter(
+                phone=OuterRef("phone")
+            )
+            .order_by(
+                "-contacted_on",
+                "-id"
+            )
+            .values("contacted_on")[:1]
+        )
+
+        return (
+            qs
+            .annotate(
+                response_total=Subquery(
+                    response_count_subquery
+                ),
+                latest_response_at=Subquery(
+                    last_response_subquery
+                ),
+            )
+            .filter(
+                id=Subquery(latest_inquiry)
+            )
+        )
+    # =====================================================
+    # RESPONSE COUNT
+    #
+    # IMPORTANT:
+    # ONLY Inquiry MODEL COUNT
+    #
+    # EnquiryCalling ka koi count nahi
+    # =====================================================
+
+    @admin.display(
+        description="Responses",
+        ordering="phone",
+    )
+    def response_count(self, obj):
+
+        return Inquiry.objects.filter(
+            phone=obj.phone
+        ).count()
+
+    # =====================================================
+    # LAST RESPONSE
+    #
+    # SAME PHONE KI LATEST INQUIRY
+    # =====================================================
+
+    @admin.display(
+        description="Last Response",
+    )
+    def last_response(self, obj):
+
+        last = (
+            Inquiry.objects
+            .filter(
+                phone=obj.phone
+            )
+            .order_by(
+                "-contacted_on",
+                "-id"
+            )
+            .first()
+        )
+
+        if last and last.contacted_on:
+            return last.contacted_on.strftime(
+                "%d %b %Y, %I:%M %p"
+            )
+
+        return "-"
 
 
 @admin.register(Setting)

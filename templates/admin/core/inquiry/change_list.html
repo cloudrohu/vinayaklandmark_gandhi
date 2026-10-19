@@ -1,0 +1,937 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+
+{% block title %}
+    Project Enquiries
+{% endblock %}
+
+
+{% block extrastyle %}
+
+<style>
+
+    /* =========================================================
+       PAGE
+    ========================================================= */
+
+    .inquiry-page {
+        padding: 10px 0 40px;
+    }
+
+
+    .inquiry-page-header {
+        margin-bottom: 10px;
+    }
+
+
+    .inquiry-page-header h1 {
+        font-size: 28px;
+        font-weight: 600;
+        margin: 0 0 8px;
+        color: #111827;
+    }
+
+
+    .add-enquiry-btn {
+        display: inline-block;
+        margin-bottom: 18px;
+        color: #2563eb;
+        text-decoration: none;
+        font-size: 13px;
+    }
+
+
+    .add-enquiry-btn:hover {
+        text-decoration: underline;
+    }
+
+        /* =========================================================
+    FILTER / SEARCH
+    ========================================================= */
+
+    .inquiry-toolbar {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 18px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+
+    /* FORCE ONE ROW */
+
+    .inquiry-filter-form {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 8px !important;
+        flex-wrap: nowrap !important;
+        width: 100%;
+        margin: 0 !important;
+    }
+
+
+    /* ALL INPUTS / SELECTS */
+
+    .inquiry-toolbar input,
+    .inquiry-toolbar select {
+        height: 38px !important;
+        box-sizing: border-box !important;
+        border: 1px solid #d1d5db !important;
+        border-radius: 5px !important;
+        padding: 0 10px !important;
+        font-size: 13px !important;
+        background: #ffffff !important;
+        color: #111827 !important;
+        margin: 0 !important;
+    }
+
+
+    /* SEARCH */
+
+    .inquiry-toolbar input[name="q"] {
+        width: 280px !important;
+        min-width: 280px !important;
+        max-width: 280px !important;
+        flex: 0 0 280px !important;
+    }
+
+
+    /* STATUS */
+
+    .inquiry-toolbar select[name="Enquiry_status"] {
+        width: 200px !important;
+        min-width: 200px !important;
+        max-width: 200px !important;
+        flex: 0 0 200px !important;
+    }
+
+
+    /* PROJECT */
+
+    .inquiry-toolbar select[name="project"] {
+        width: 260px !important;
+        min-width: 260px !important;
+        max-width: 260px !important;
+        flex: 0 0 260px !important;
+    }
+
+
+    /* DATE */
+
+    .inquiry-toolbar input[name="contacted_on"] {
+        width: 170px !important;
+        min-width: 170px !important;
+        max-width: 170px !important;
+        flex: 0 0 170px !important;
+    }
+
+
+    /* SEARCH BUTTON */
+
+    .inquiry-toolbar .search-btn {
+        height: 38px !important;
+        width: 90px !important;
+        min-width: 90px !important;
+        flex: 0 0 90px !important;
+
+        border: 0 !important;
+        background: #2563eb !important;
+        color: #ffffff !important;
+
+        border-radius: 5px !important;
+        padding: 0 !important;
+
+        cursor: pointer;
+        font-size: 13px !important;
+        font-weight: 500;
+    }
+
+
+    /* RESET BUTTON */
+
+    .inquiry-toolbar .reset-btn {
+        height: 38px !important;
+        width: 70px !important;
+        min-width: 70px !important;
+        flex: 0 0 70px !important;
+
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        box-sizing: border-box !important;
+
+        border: 1px solid #d1d5db !important;
+        border-radius: 5px !important;
+
+        background: #ffffff !important;
+        color: #374151 !important;
+
+        text-decoration: none !important;
+        font-size: 13px !important;
+    }
+
+
+    /* HOVER */
+
+    .inquiry-toolbar .search-btn:hover {
+        background: #1d4ed8 !important;
+    }
+
+
+    .inquiry-toolbar .reset-btn:hover {
+        background: #f9fafb !important;
+        color: #111827 !important;
+    }
+
+
+    /* =========================================================
+    MOBILE
+    ========================================================= */
+
+    @media (max-width: 900px) {
+
+        .inquiry-filter-form {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            flex-wrap: nowrap !important;
+        }
+
+
+        .inquiry-toolbar input[name="q"],
+        .inquiry-toolbar select[name="Enquiry_status"],
+        .inquiry-toolbar select[name="project"],
+        .inquiry-toolbar input[name="contacted_on"],
+        .inquiry-toolbar .search-btn,
+        .inquiry-toolbar .reset-btn {
+
+            width: 100% !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
+            flex: 1 1 100% !important;
+
+        }
+
+    }
+
+
+
+
+
+    /* =========================================================
+       GRID
+    ========================================================= */
+
+    .inquiry-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+
+    /* =========================================================
+       CARD
+    ========================================================= */
+
+    .inquiry-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 9px;
+        overflow: hidden;
+        box-shadow: 0 2px 7px rgba(0, 0, 0, 0.05);
+        min-width: 0;
+    }
+
+
+    .inquiry-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 13px 10px 10px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+
+    .inquiry-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: #111827;
+        text-decoration: none;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+
+    .inquiry-name:hover {
+        color: #2563eb;
+    }
+
+
+    /* =========================================================
+       STATUS
+    ========================================================= */
+
+    .status-badge {
+        flex-shrink: 0;
+        background: #fff1dc;
+        color: #e67e00;
+        border-radius: 20px;
+        padding: 3px 8px;
+        font-size: 9px;
+        font-weight: 600;
+    }
+
+
+    /* =========================================================
+       BODY
+    ========================================================= */
+
+    .inquiry-body {
+        padding: 9px 10px 0;
+    }
+
+
+    .inquiry-info {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 7px;
+        color: #374151;
+        font-size: 11px;
+        min-width: 0;
+    }
+
+
+    .inquiry-info i {
+        width: 14px;
+        color: #111827;
+        text-align: center;
+        flex-shrink: 0;
+        font-style: normal;
+    }
+
+
+    .inquiry-info span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        min-width: 0;
+    }
+
+
+    /* =========================================================
+       RESPONSE BOX
+    ========================================================= */
+
+    .response-box {
+        margin-top: 10px;
+        padding: 10px;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-radius: 7px;
+    }
+
+
+    .response-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        min-height: 24px;
+    }
+
+
+    .response-label {
+        color: #6b7280;
+        font-size: 10px;
+    }
+
+
+    .response-value {
+        color: #111827;
+        font-size: 11px;
+        font-weight: 700;
+        text-align: right;
+    }
+
+
+    .response-value.empty {
+        color: #9ca3af;
+        font-weight: 400;
+    }
+
+
+    /* =========================================================
+       HISTORY
+    ========================================================= */
+
+    .history-section {
+        margin-top: 10px;
+        padding: 10px 0;
+        border-top: 1px solid #e5e7eb;
+    }
+
+
+    .history-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 6px;
+    }
+
+
+    .history-empty {
+        font-size: 10px;
+        color: #9ca3af;
+    }
+
+
+    .history-count {
+        color: #2563eb;
+        font-weight: 600;
+    }
+
+
+    /* =========================================================
+       ACTION BUTTONS
+    ========================================================= */
+
+    .inquiry-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 5px;
+        padding: 0 10px 10px;
+    }
+
+
+    .inquiry-btn {
+        height: 28px;
+        border-radius: 20px;
+        border: 0;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9px;
+        font-weight: 600;
+        color: #ffffff;
+        cursor: pointer;
+    }
+
+
+    .call-btn {
+        background: #16a34a;
+    }
+
+
+    .call-btn:hover {
+        background: #15803d;
+        color: #ffffff;
+    }
+
+
+    .whatsapp-btn {
+        background: #22c55e;
+    }
+
+
+    .whatsapp-btn:hover {
+        background: #16a34a;
+        color: #ffffff;
+    }
+
+
+    .edit-btn {
+        background: #111827;
+    }
+
+
+    .edit-btn:hover {
+        background: #1f2937;
+        color: #ffffff;
+    }
+
+
+    /* =========================================================
+       EMPTY
+    ========================================================= */
+
+    .inquiry-empty {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 40px;
+        text-align: center;
+        color: #9ca3af;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+
+    @media (max-width: 1500px) {
+
+        .inquiry-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+    }
+
+
+    @media (max-width: 1200px) {
+
+        .inquiry-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+    }
+
+
+    @media (max-width: 900px) {
+
+        .inquiry-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+    }
+
+
+    @media (max-width: 600px) {
+
+        .inquiry-grid {
+            grid-template-columns: 1fr;
+        }
+
+
+        .inquiry-filter-form {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+
+        .inquiry-toolbar select,
+        .inquiry-toolbar input,
+        .search-btn,
+        .reset-btn {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
+
+
+
+{% block content %}
+
+<div class="inquiry-page">
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="inquiry-page-header">
+
+        <h1>
+            3. Project Enquiries
+        </h1>
+
+        <a
+            href="{% url 'admin:core_inquiry_add' %}"
+            class="add-enquiry-btn"
+        >
+            + Add Project Enquiry
+        </a>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         FILTER / SEARCH
+    ====================================================== -->
+
+    <div class="inquiry-toolbar">
+
+        <form
+            method="get"
+            class="inquiry-filter-form"
+        >
+
+            <!-- SEARCH -->
+
+            <input
+                type="text"
+                name="q"
+                value="{{ cl.query }}"
+                placeholder="Search enquiry..."
+            >
+
+
+            <!-- STATUS -->
+
+            <select name="Enquiry_status">
+
+                <option value="">
+                    All Status
+                </option>
+
+                {% for value, label in inquiry_status_choices %}
+
+                    <option
+                        value="{{ value }}"
+                        {% if request.GET.Enquiry_status == value %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ label }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+
+            <!-- PROJECT -->
+
+            <select name="project">
+
+                <option value="">
+                    All Projects
+                </option>
+
+                {% for project in inquiry_projects %}
+
+                    <option
+                        value="{{ project.pk }}"
+                        {% if request.GET.project == project.pk|stringformat:"s" %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ project.project_name }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+
+            <!-- CONTACTED DATE -->
+
+            <input
+                type="date"
+                name="contacted_on"
+                value="{{ request.GET.contacted_on }}"
+                title="Contacted date"
+            >
+
+
+            <!-- SEARCH BUTTON -->
+
+            <button
+                type="submit"
+                class="search-btn"
+            >
+                Search
+            </button>
+
+
+            <!-- RESET -->
+
+            <a
+                href="{% url 'admin:core_inquiry_changelist' %}"
+                class="reset-btn"
+            >
+                Reset
+            </a>
+
+        </form>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         INQUIRY CARDS
+    ====================================================== -->
+
+    {% if cl.result_list %}
+
+        <div class="inquiry-grid">
+
+
+            {% for inquiry in cl.result_list %}
+
+                <div class="inquiry-card">
+
+
+                    <!-- =================================================
+                         CARD HEADER
+                    ================================================== -->
+
+                    <div class="inquiry-card-header">
+
+                        <a
+                            href="{% url 'admin:core_inquiry_change' inquiry.pk %}"
+                            class="inquiry-name"
+                            title="{{ inquiry.name }}"
+                        >
+                            {{ inquiry.name }}
+                        </a>
+
+
+                        <span class="status-badge">
+
+                            {{ inquiry.Enquiry_status|default:"New" }}
+
+                        </span>
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         CARD BODY
+                    ================================================== -->
+
+                    <div class="inquiry-body">
+
+
+                        <!-- PHONE -->
+
+                        <div class="inquiry-info">
+
+                            <i>☎</i>
+
+                            <span>
+                                {{ inquiry.phone }}
+                            </span>
+
+                        </div>
+
+
+
+                        <!-- EMAIL -->
+
+                        {% if inquiry.email %}
+
+                            <div class="inquiry-info">
+
+                                <i>✉</i>
+
+                                <span title="{{ inquiry.email }}">
+                                    {{ inquiry.email }}
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+
+                        <!-- PROJECT -->
+
+                        {% if inquiry.project %}
+
+                            <div class="inquiry-info">
+
+                                <i>⌂</i>
+
+                                <span title="{{ inquiry.project }}">
+                                    {{ inquiry.project }}
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+
+                        <!-- =================================================
+                             RESPONSE INFORMATION
+                        ================================================== -->
+
+                        <div class="response-box">
+
+
+                            <!-- RESPONSE COUNT -->
+
+                            <div class="response-row">
+
+                                <span class="response-label">
+                                    Responses
+                                </span>
+
+                                <span class="response-value">
+
+                                    {{ inquiry.response_total|default:"0" }}
+
+                                </span>
+
+                            </div>
+
+
+
+                            <!-- LAST RESPONSE -->
+
+                            <div class="response-row">
+
+                                <span class="response-label">
+                                    Last Response
+                                </span>
+
+
+                                {% if inquiry.latest_response_at %}
+
+                                    <span class="response-value">
+
+                                        {{ inquiry.latest_response_at|date:"d M Y, h:i A" }}
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="response-value empty">
+                                        -
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                        </div>
+
+
+                                <div class="history-section">
+
+                            <div class="history-title">
+                                ▣ Calling History
+                            </div>
+
+                            {% with history=inquiry.calling_history.all %}
+
+                                {% if history %}
+
+                                    <div class="history-list">
+
+                                        {% for call in history %}
+
+                                            <div class="history-item">                                   
+
+                                                <!-- NOTE -->
+                                                {% if call.note %}
+
+                                                    <div class="history-row">
+
+                                                        <span class="history-label">
+                                                            Note
+                                                        </span>
+
+                                                        <span class="history-value">
+                                                            {{ call.note }} - {{ call.called_at|date:"d M Y, h:i A" }}
+                                                        </span>
+
+                                                    </div>
+
+                                                {% endif %}
+
+                                            </div>
+
+                                        {% endfor %}
+
+                                    </div>
+
+                                {% else %}
+
+                                    <div class="history-empty">
+                                        No calling history available.
+                                    </div>
+
+                                {% endif %}
+
+                            {% endwith %}
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         ACTION BUTTONS
+                    ================================================== -->
+
+                    <div class="inquiry-actions">
+
+
+                        <!-- CALL -->
+
+                        <a
+                            href="tel:{{ inquiry.phone }}"
+                            class="inquiry-btn call-btn"
+                        >
+                            ☎ Call
+                        </a>
+
+
+
+                        <!-- WHATSAPP -->
+
+                        <a
+                            href="https://wa.me/91{{ inquiry.phone }}"
+                            target="_blank"
+                            rel="noopener"
+                            class="inquiry-btn whatsapp-btn"
+                        >
+                            ▣ WhatsApp
+                        </a>
+
+
+
+                        <!-- EDIT -->
+
+                        <a
+                            href="{% url 'admin:core_inquiry_change' inquiry.pk %}"
+                            class="inquiry-btn edit-btn"
+                        >
+                            ✎ Edit
+                        </a>
+
+
+                    </div>
+
+
+                </div>
+
+            {% endfor %}
+
+
+        </div>
+
+
+    {% else %}
+
+        <div class="inquiry-empty">
+
+            No enquiries found.
+
+        </div>
+
+    {% endif %}
+
+
+</div>
+
+{% endblock %}

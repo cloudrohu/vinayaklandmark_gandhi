@@ -1083,8 +1083,6 @@ class USP(BaseModel):
     point = models.CharField(null=True, blank=True,max_length=150)
     def __str__(self):
         return self.point
-
-
 class Configuration(BaseModel):
     Project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="configurations")
     bhk_type = models.CharField(max_length=50)
@@ -1130,8 +1128,6 @@ class Configuration(BaseModel):
     class Meta:
         # Configuration ke instances ko Project aur BHK type ke hisaab se arrange karein
         ordering = ['bhk_type']
-
-
 class Connectivity(BaseModel):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="connectivity")
     title = models.CharField(max_length=150, help_text="e.g. Western Express Highway")
@@ -1158,9 +1154,7 @@ class Connectivity(BaseModel):
 
     def __str__(self):
         return self.title
-    
 
-    
 class Amenities(BaseModel):
     Project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="amenities")
     amenities = models.ForeignKey(ProjectAmenities, on_delete=models.CASCADE, related_name="amenities")
@@ -1168,8 +1162,6 @@ class Amenities(BaseModel):
     def __str__(self):
         return f"{self.Project.project_name} - {self.amenities.title}"
 
-
-    
 class Gallery(BaseModel):
     CATEGORY_CHOICES = (
         ('all', 'All'),
@@ -1192,7 +1184,6 @@ class Gallery(BaseModel):
 
     def __str__(self):
         return self.title or f"Gallery Item {self.id}"
-
     
 class Header(BaseModel):
     Project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="headers")    
@@ -1248,17 +1239,52 @@ class ProjectFAQ(BaseModel):
 
     def __str__(self):
         return f"{self.project.project_name} - {self.question}"
+
+
 class Enquiry(BaseModel):
+
     project = models.ForeignKey(
         'Project',
         on_delete=models.CASCADE,
         related_name='enquiries'
     )
+
+    ENQUIRY_STATUS_CHOICES = [
+        ("New", "New"),
+        ("Meeting", "Meeting"),
+        ("FollowUp", "Follow Up"),
+        ("Meeting_FollowUp", "Meeting-Follow Up"),
+        ("Not Received", "Not Received"),
+        ("Not Interested", "Not Interested"),
+        ("Deal Done", "Deal Done"),
+    ]
+
+    Enquiry_status = models.CharField(
+        max_length=25,
+        choices=ENQUIRY_STATUS_CHOICES,
+        default="New",
+        null=True,
+        blank=True,
+    )
+
     name = models.CharField(max_length=120)
-    email = models.EmailField(blank=True, null=True)
-    phone = models.CharField(max_length=20)
-    message = models.TextField(blank=True)
-    contacted_on = models.DateTimeField(auto_now_add=True)
+
+    email = models.EmailField(
+        blank=True,
+        null=True
+    )
+
+    phone = models.CharField(
+        max_length=20
+    )
+
+    message = models.TextField(
+        blank=True
+    )
+
+    contacted_on = models.DateTimeField(
+        auto_now_add=True
+    )
 
     def __str__(self):
         return f"Enquiry for {self.project.project_name} by {self.name}"
@@ -1267,6 +1293,43 @@ class Enquiry(BaseModel):
         verbose_name = 'Project Enquiry'
         verbose_name_plural = '3. Project Enquiries'
         ordering = ['-contacted_on']
+
+
+
+class EnquiryCalling(BaseModel):
+
+    enquiry = models.ForeignKey(
+        Enquiry,
+        on_delete=models.CASCADE,
+        related_name="calling_history"
+    )
+
+    called_at = models.DateTimeField(
+        default=timezone.now
+    )
+
+    response = models.TextField(
+        blank=True,
+        null=True
+    )
+
+    note = models.TextField(
+        blank=True,
+        null=True
+    )
+
+    def __str__(self):
+        return (
+            f"{self.enquiry.name} - "
+            f"{self.called_at:%d %b %Y %I:%M %p}"
+        )
+
+    class Meta:
+        verbose_name = "Enquiry Calling"
+        verbose_name_plural = "Enquiry Calling History"
+        ordering = ["-called_at"]
+
+
 
 class ProjectContactPerson(BaseModel):
 
@@ -1675,7 +1738,6 @@ class Visit(BaseModel):
         self.full_clean()
         super().save(*args, **kwargs)
 
-
 class Followup(BaseModel):
 
     TYPE_CHOICES = (
@@ -1880,7 +1942,6 @@ class Followup(BaseModel):
 
         if project:
             project.refresh_calling_status()
-
 
 class Meeting(BaseModel):
 

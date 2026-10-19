@@ -5,6 +5,7 @@ from django.db import models
 from django.utils.safestring import mark_safe
 from django_ckeditor_5.fields import CKEditor5Field
 from apps.properties.models import Project
+from django.utils import timezone
 
 class BaseModel(models.Model):
     id = models.UUIDField(
@@ -317,16 +318,99 @@ class Enquiry(BaseModel):
     def __str__(self):
         return f"{self.name or 'Unknown'} - {self.phone or 'No Phone'}"
 
+
+
+
 class Inquiry(BaseModel):
-    project = models.ForeignKey(Project, on_delete=models.SET_NULL, null=True, blank=True, related_name="inquiries")
+
+    
+
+    ENQUIRY_STATUS_CHOICES = [
+        ("New", "New"),
+        ("FollowUp", "Follow Up"),
+        ("Not Received", "Not Received"),
+        ("Qualified", "Qualified"),
+    ]
+
+    Enquiry_status = models.CharField(
+        max_length=25,
+        choices=ENQUIRY_STATUS_CHOICES,
+        default="New",
+        null=True,
+        blank=True,
+    )
+
+    project = models.ForeignKey(
+            Project,
+            on_delete=models.SET_NULL,
+            null=True,
+            blank=True,
+            related_name="inquiries"
+        )
+
     name = models.CharField(max_length=150)
-    phone = models.CharField(max_length=20)
-    email = models.EmailField(blank=True, null=True)
-    message = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+
+    phone = models.CharField(
+        max_length=15,
+    )
+
+    email = models.EmailField(
+        blank=True,
+        null=True
+    )
+
+    message = models.TextField(
+        blank=True,
+        null=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    contacted_on = models.DateTimeField(
+        auto_now_add=True
+    )
 
     def __str__(self):
         return f"{self.name} - {self.phone}"
+
+    class Meta:
+        verbose_name = "Project Enquiry"
+        verbose_name_plural = "3. Project Enquiries"
+        ordering = ["-created_at"]
+
+
+
+class EnquiryCalling(BaseModel):
+
+    enquiry = models.ForeignKey(
+        Inquiry,
+        on_delete=models.CASCADE,
+        related_name="calling_history"
+    )
+
+    called_at = models.DateTimeField(
+        default=timezone.now
+    )
+
+
+    note = models.TextField(
+        blank=True,
+        null=True
+    )
+
+    def __str__(self):
+        return (
+            f"{self.enquiry.name} - "
+            f"{self.called_at:%d %b %Y %I:%M %p}"
+        )
+
+    class Meta:
+        verbose_name = "Enquiry Calling"
+        verbose_name_plural = "Enquiry Calling History"
+        ordering = ["-called_at"]
+
 
 
 
