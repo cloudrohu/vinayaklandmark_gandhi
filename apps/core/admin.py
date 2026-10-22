@@ -1,11 +1,14 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from django.contrib import admin
-from django.db.models import OuterRef, Subquery
 
 from django.contrib import admin
-from django.db.models import OuterRef, Subquery,Count
-
+from django.db.models import (
+    Q,
+    Count,
+    OuterRef,
+    Subquery,
+)
 
 # =========================================================
 # ENQUIRY CALLING HISTORY INLINE
@@ -27,30 +30,7 @@ from .models.website import (
     USP,
     PriceBreakupInquiry,
     Inquiry,
-    EnquiryCalling
 )
-
-class EnquiryCallingInline(admin.TabularInline):
-    model = EnquiryCalling
-    extra = 0
-    can_delete = True
-
-    fields = (
-        "called_at",
-        "response",
-        "note",
-    )
-
-    readonly_fields = (
-        "called_at",
-    )
-
-    ordering = (
-        "-called_at",
-    )
-
-
-
 
 class BaseSettingInline(admin.StackedInline):
     """
@@ -386,38 +366,14 @@ class EnquiryInline(BaseSettingInline):
     extra = 0
 
 
-class EnquiryCallingInline(admin.TabularInline):
-    model = EnquiryCalling
-
-    extra = 0
-    can_delete = True
-
-    fields = (
-        "called_at",
-        "note",
-    )
-
-    readonly_fields = (
-        "called_at",
-    )
-
-    ordering = (
-        "-called_at",
-    )
-
-
-# =========================================================
-# INQUIRY ADMIN
-# =========================================================
-
 @admin.register(Inquiry)
 class InquiryAdmin(admin.ModelAdmin):
 
     change_list_template = "admin/core/inquiry/change_list.html"
 
-    # -----------------------------------------------------
-    # LIST DISPLAY
-    # -----------------------------------------------------
+    # =====================================================
+    # LIST
+    # =====================================================
 
     list_display = (
         "name",
@@ -434,9 +390,9 @@ class InquiryAdmin(admin.ModelAdmin):
         "name",
     )
 
-    # -----------------------------------------------------
+    # =====================================================
     # SEARCH
-    # -----------------------------------------------------
+    # =====================================================
 
     search_fields = (
         "name",
@@ -445,55 +401,190 @@ class InquiryAdmin(admin.ModelAdmin):
         "project__project_name",
     )
 
-    # -----------------------------------------------------
-    # FILTER
-    # -----------------------------------------------------
+    # =====================================================
+    # IMPORTANT
+    # Custom filter use ho raha hai
+    # =====================================================
 
     list_filter = (
-        "Enquiry_status",
-        "project",
-        "contacted_on",
-    )
+    "Enquiry_status",
+    "project",
+    "contacted_on",
+)
 
-    # -----------------------------------------------------
+    # =====================================================
     # READONLY
-    # -----------------------------------------------------
+    # =====================================================
 
     readonly_fields = (
         "created_at",
         "contacted_on",
     )
 
-    # -----------------------------------------------------
+    # =====================================================
     # ORDERING
-    # -----------------------------------------------------
+    # =====================================================
 
     ordering = (
         "-contacted_on",
+        "-id",
     )
 
-    list_per_page = 20
-
-    # -----------------------------------------------------
-    # INLINE
-    # -----------------------------------------------------
-
-    inlines = [
-        EnquiryCallingInline,
-    ]
+    list_per_page = 3
 
     # =====================================================
-    # SAME PHONE NUMBER
-    # ONLY LATEST INQUIRY SHOW
+    # CHANGE LIST CONTEXT
     # =====================================================
 
     def get_queryset(self, request):
 
         qs = super().get_queryset(request)
 
-        # -----------------------------------------
-        # SAME PHONE KI TOTAL INQUIRY COUNT
-        # -----------------------------------------
+        status = request.GET.get("Enquiry_status", "").strip()
+        project = request.GET.get("project", "").strip()
+        contacted_on = request.GET.get("contacted_on", "").strip()
+        search = request.GET.get("q", "").strip()
+
+        if search:
+            qs = qs.filter(
+                Q(name__icontains=search)
+                | Q(phone__icontains=search)
+                | Q(email__icontains=search)
+                | Q(project__project_name__icontains=search)
+            )
+
+        if status:
+            qs = qs.filter(
+                Enquiry_status=status
+            )
+
+        if project:
+            qs = qs.filter(
+                project_id=project
+            )
+
+        if contacted_on:
+            qs = qs.filter(
+                contacted_on__date=contacted_on
+            )
+
+        return qs
+
+    def changelist_view(self, request, extra_context=None):
+
+        extra_context = extra_context or {}
+
+        extra_context["inquiry_status_choices"] = (
+            Inquiry.ENQUIRY_STATUS_CHOICES
+        )
+
+        project_model = (
+            Inquiry._meta
+            .get_field("project")
+            .remote_field
+            .model
+        )
+
+        extra_context["inquiry_projects"] = (
+            project_model.objects
+            .all()
+            .order_by("project_name")
+        )
+
+        return super().changelist_view(
+            request,
+            extra_context=extra_context
+        )
+
+    # =====================================================
+    # QUERYSET
+    # =====================================================
+
+    def get_queryset(self, request):
+
+        qs = super().get_queryset(request)
+
+        # -------------------------------------------------
+        # GET FILTER VALUES
+        # -------------------------------------------------
+
+        status = request.GET.get(
+            "Enquiry_status"
+        )
+
+        project = request.GET.get(
+            "project"
+        )
+
+        contacted_on = request.GET.get(
+            "contacted_on"
+        )
+
+        search = request.GET.get(
+            "q"
+        )
+
+        # -------------------------------------------------
+        # CLEAN VALUES
+        # -------------------------------------------------
+
+        status = status.strip() if status else ""
+        project = project.strip() if project else ""
+        contacted_on = (
+            contacted_on.strip()
+            if contacted_on
+            else ""
+        )
+        search = search.strip() if search else ""
+
+        # =================================================
+        # SEARCH
+        # =================================================
+
+        if search:
+
+            qs = qs.filter(
+                Q(name__icontains=search)
+                | Q(phone__icontains=search)
+                | Q(email__icontains=search)
+                | Q(
+                    project__project_name__icontains=search
+                )
+            )
+
+        # =================================================
+        # STATUS FILTER
+        # =================================================
+
+        if status:
+
+            qs = qs.filter(
+                Enquiry_status=status
+            )
+
+        # =================================================
+        # PROJECT FILTER
+        # =================================================
+
+        if project:
+
+            qs = qs.filter(
+                project_id=project
+            )
+
+        # =================================================
+        # DATE FILTER
+        # =================================================
+
+        if contacted_on:
+
+            qs = qs.filter(
+                contacted_on__date=contacted_on
+            )
+
+        # =================================================
+        # RESPONSE COUNT
+        # =================================================
 
         response_count_subquery = (
             Inquiry.objects
@@ -507,25 +598,9 @@ class InquiryAdmin(admin.ModelAdmin):
             .values("total")[:1]
         )
 
-        # -----------------------------------------
-        # SAME PHONE KI LATEST INQUIRY
-        # -----------------------------------------
-
-        latest_inquiry = (
-            Inquiry.objects
-            .filter(
-                phone=OuterRef("phone")
-            )
-            .order_by(
-                "-contacted_on",
-                "-id"
-            )
-            .values("id")[:1]
-        )
-
-        # -----------------------------------------
-        # SAME PHONE KI LATEST RESPONSE DATE
-        # -----------------------------------------
+        # =================================================
+        # LAST RESPONSE
+        # =================================================
 
         last_response_subquery = (
             Inquiry.objects
@@ -539,43 +614,64 @@ class InquiryAdmin(admin.ModelAdmin):
             .values("contacted_on")[:1]
         )
 
-        return (
+        # =================================================
+        # ANNOTATE
+        # =================================================
+
+        qs = qs.annotate(
+
+            response_total=Subquery(
+                response_count_subquery
+            ),
+
+            latest_response_at=Subquery(
+                last_response_subquery
+            ),
+
+        )
+
+        # =================================================
+        # IMPORTANT
+        # Latest inquiry per phone
+        #
+        # Status filter ke baad latest record
+        # already filtered queryset se liya jayega.
+        # =================================================
+
+        latest_ids = (
             qs
-            .annotate(
-                response_total=Subquery(
-                    response_count_subquery
-                ),
-                latest_response_at=Subquery(
-                    last_response_subquery
-                ),
+            .order_by(
+                "phone",
+                "-contacted_on",
+                "-id"
             )
-            .filter(
-                id=Subquery(latest_inquiry)
+            .values("id")
+        )
+
+        # =================================================
+        # FINAL
+        # =================================================
+
+        return qs.filter(
+            id__in=Subquery(
+                latest_ids
             )
         )
+
     # =====================================================
     # RESPONSE COUNT
-    #
-    # IMPORTANT:
-    # ONLY Inquiry MODEL COUNT
-    #
-    # EnquiryCalling ka koi count nahi
     # =====================================================
 
     @admin.display(
         description="Responses",
-        ordering="phone",
+        ordering="response_total",
     )
     def response_count(self, obj):
 
-        return Inquiry.objects.filter(
-            phone=obj.phone
-        ).count()
+        return obj.response_total or 0
 
     # =====================================================
     # LAST RESPONSE
-    #
-    # SAME PHONE KI LATEST INQUIRY
     # =====================================================
 
     @admin.display(
@@ -583,25 +679,13 @@ class InquiryAdmin(admin.ModelAdmin):
     )
     def last_response(self, obj):
 
-        last = (
-            Inquiry.objects
-            .filter(
-                phone=obj.phone
-            )
-            .order_by(
-                "-contacted_on",
-                "-id"
-            )
-            .first()
-        )
+        if obj.latest_response_at:
 
-        if last and last.contacted_on:
-            return last.contacted_on.strftime(
+            return obj.latest_response_at.strftime(
                 "%d %b %Y, %I:%M %p"
             )
 
         return "-"
-
 
 @admin.register(Setting)
 class SettingAdmin(admin.ModelAdmin):

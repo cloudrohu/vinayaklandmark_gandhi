@@ -11,6 +11,209 @@
 
 <style>
 
+
+    /* =========================================================
+   FILTER / SEARCH
+========================================================= */
+
+.inquiry-toolbar {
+    width: 100%;
+    box-sizing: border-box;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 18px;
+}
+
+
+/* =========================================================
+   FILTER ROW
+========================================================= */
+
+.inquiry-filter-form {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-wrap: nowrap !important;
+    width: 100%;
+    margin: 0 !important;
+}
+
+
+/* =========================================================
+   ALL INPUTS / SELECTS
+========================================================= */
+
+.inquiry-toolbar input,
+.inquiry-toolbar select {
+    height: 38px !important;
+    box-sizing: border-box !important;
+
+    border: 1px solid #d1d5db !important;
+    border-radius: 5px !important;
+
+    padding: 0 10px !important;
+
+    font-size: 13px !important;
+    font-family: inherit !important;
+
+    background: #ffffff !important;
+    color: #111827 !important;
+
+    margin: 0 !important;
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+#inquiry-search {
+    width: 280px !important;
+    min-width: 280px !important;
+    max-width: 280px !important;
+    flex: 0 0 280px !important;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+#inquiry-status {
+    width: 200px !important;
+    min-width: 200px !important;
+    max-width: 200px !important;
+    flex: 0 0 200px !important;
+}
+
+
+/* =========================================================
+   PROJECT
+========================================================= */
+
+#inquiry-project {
+    width: 260px !important;
+    min-width: 260px !important;
+    max-width: 260px !important;
+    flex: 0 0 260px !important;
+}
+
+
+/* =========================================================
+   DATE
+========================================================= */
+
+#inquiry-contacted-on {
+    width: 170px !important;
+    min-width: 170px !important;
+    max-width: 170px !important;
+    flex: 0 0 170px !important;
+}
+
+
+/* =========================================================
+   SEARCH BUTTON
+========================================================= */
+
+.inquiry-toolbar .search-btn {
+    height: 38px !important;
+
+    width: 90px !important;
+    min-width: 90px !important;
+
+    flex: 0 0 90px !important;
+
+    border: 0 !important;
+    border-radius: 5px !important;
+
+    padding: 0 !important;
+
+    background: #2563eb !important;
+    color: #ffffff !important;
+
+    cursor: pointer;
+
+    font-size: 13px !important;
+    font-weight: 500 !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+
+/* =========================================================
+   RESET BUTTON
+========================================================= */
+
+.inquiry-toolbar .reset-btn {
+    height: 38px !important;
+
+    width: 70px !important;
+    min-width: 70px !important;
+
+    flex: 0 0 70px !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    box-sizing: border-box !important;
+
+    border: 1px solid #d1d5db !important;
+    border-radius: 5px !important;
+
+    background: #ffffff !important;
+    color: #374151 !important;
+
+    text-decoration: none !important;
+
+    font-size: 13px !important;
+}
+
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.inquiry-toolbar .search-btn:hover {
+    background: #1d4ed8 !important;
+}
+
+.inquiry-toolbar .reset-btn:hover {
+    background: #f9fafb !important;
+    color: #111827 !important;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .inquiry-filter-form {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        flex-wrap: nowrap !important;
+    }
+
+    #inquiry-search,
+    #inquiry-status,
+    #inquiry-project,
+    #inquiry-contacted-on,
+    .inquiry-toolbar .search-btn,
+    .inquiry-toolbar .reset-btn {
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+        flex: 1 1 100% !important;
+    }
+
+}
     /* =========================================================
        PAGE
     ========================================================= */
@@ -611,109 +814,194 @@
 
 
 
-    <!-- =====================================================
-         FILTER / SEARCH
-    ====================================================== -->
+<!-- =====================================================
+     INQUIRY FILTER / SEARCH
+====================================================== -->
 
-    <div class="inquiry-toolbar">
+<div class="inquiry-toolbar">
 
-        <form
-            method="get"
-            class="inquiry-filter-form"
+    <div class="inquiry-filter-form">
+
+        <!-- SEARCH -->
+        <input
+            type="text"
+            id="inquiry-search"
+            value="{{ request.GET.q|default:'' }}"
+            placeholder="Search enquiry..."
         >
 
-            <!-- SEARCH -->
 
-            <input
-                type="text"
-                name="q"
-                value="{{ cl.query }}"
-                placeholder="Search enquiry..."
-            >
+        <!-- STATUS -->
+        <select id="inquiry-status">
 
+            <option value="">
+                All Status
+            </option>
 
-            <!-- STATUS -->
+            {% for value, label in inquiry_status_choices %}
 
-            <select name="Enquiry_status">
-
-                <option value="">
-                    All Status
+                <option
+                    value="{{ value }}"
+                    {% if request.GET.Enquiry_status == value %}
+                        selected
+                    {% endif %}
+                >
+                    {{ label }}
                 </option>
 
-                {% for value, label in inquiry_status_choices %}
+            {% endfor %}
 
-                    <option
-                        value="{{ value }}"
-                        {% if request.GET.Enquiry_status == value %}
-                            selected
-                        {% endif %}
-                    >
-                        {{ label }}
-                    </option>
-
-                {% endfor %}
-
-            </select>
+        </select>
 
 
-            <!-- PROJECT -->
+        <!-- PROJECT -->
+        <select id="inquiry-project">
 
-            <select name="project">
+            <option value="">
+                All Projects
+            </option>
 
-                <option value="">
-                    All Projects
+            {% for project in inquiry_projects %}
+
+                <option
+                    value="{{ project.pk }}"
+                    {% if request.GET.project == project.pk|stringformat:"s" %}
+                        selected
+                    {% endif %}
+                >
+                    {{ project.project_name }}
                 </option>
 
-                {% for project in inquiry_projects %}
+            {% endfor %}
 
-                    <option
-                        value="{{ project.pk }}"
-                        {% if request.GET.project == project.pk|stringformat:"s" %}
-                            selected
-                        {% endif %}
-                    >
-                        {{ project.project_name }}
-                    </option>
-
-                {% endfor %}
-
-            </select>
+        </select>
 
 
-            <!-- CONTACTED DATE -->
-
-            <input
-                type="date"
-                name="contacted_on"
-                value="{{ request.GET.contacted_on }}"
-                title="Contacted date"
-            >
+        <!-- CONTACTED DATE -->
+        <input
+            type="date"
+            id="inquiry-contacted-on"
+            value="{{ request.GET.contacted_on|default:'' }}"
+        >
 
 
-            <!-- SEARCH BUTTON -->
+        <!-- SEARCH BUTTON -->
+        <button
+            type="button"
+            class="search-btn"
+            id="inquiry-search-btn"
+        >
+            Search
+        </button>
 
-            <button
-                type="submit"
-                class="search-btn"
-            >
-                Search
-            </button>
 
-
-            <!-- RESET -->
-
-            <a
-                href="{% url 'admin:core_inquiry_changelist' %}"
-                class="reset-btn"
-            >
-                Reset
-            </a>
-
-        </form>
+        <!-- RESET -->
+        <a
+            href="{% url 'admin:core_inquiry_changelist' %}"
+            class="reset-btn"
+        >
+            Reset
+        </a>
 
     </div>
 
+</div>
 
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const searchInput = document.getElementById("inquiry-search");
+    const statusInput = document.getElementById("inquiry-status");
+    const projectInput = document.getElementById("inquiry-project");
+    const dateInput = document.getElementById("inquiry-contacted-on");
+    const searchButton = document.getElementById("inquiry-search-btn");
+
+
+    function applyFilters() {
+
+        const params = new URLSearchParams();
+
+
+        /* SEARCH */
+
+        const search = searchInput.value.trim();
+
+        if (search) {
+            params.set("q", search);
+        }
+
+
+        /* STATUS */
+
+        const status = statusInput.value.trim();
+
+        if (status) {
+            params.set("Enquiry_status", status);
+        }
+
+
+        /* PROJECT */
+
+        const project = projectInput.value.trim();
+
+        if (project) {
+            params.set("project", project);
+        }
+
+
+        /* CONTACTED DATE */
+
+        const contactedOn = dateInput.value.trim();
+
+        if (contactedOn) {
+            params.set("contacted_on", contactedOn);
+        }
+
+
+        /* BUILD URL */
+
+        const baseUrl = "{% url 'admin:core_inquiry_changelist' %}";
+
+        const queryString = params.toString();
+
+        const finalUrl = queryString
+            ? baseUrl + "?" + queryString
+            : baseUrl;
+
+
+        /* CHANGE URL */
+
+        window.location.href = finalUrl;
+
+    }
+
+
+    /* SEARCH BUTTON */
+
+    searchButton.addEventListener("click", function () {
+        applyFilters();
+    });
+
+
+    /* ENTER KEY */
+
+    searchInput.addEventListener("keydown", function (event) {
+
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            applyFilters();
+
+        }
+
+    });
+
+});
+
+</script>
 
     <!-- =====================================================
          INQUIRY CARDS
@@ -865,56 +1153,24 @@
 
 
                         </div>
+                        
 
-
-                                <div class="history-section">
+                        <div class="history-section">
 
                             <div class="history-title">
                                 ▣ Calling History
                             </div>
 
-                            {% with history=inquiry.calling_history.all %}
+                            {% if inquiry.call_comment %}
 
-                                {% if history %}
+                            
+                                <div class="call-comment-text">
+                                    {{ inquiry.call_comment }}
+                                </div>
 
-                                    <div class="history-list">
+                           
 
-                                        {% for call in history %}
-
-                                            <div class="history-item">                                   
-
-                                                <!-- NOTE -->
-                                                {% if call.note %}
-
-                                                    <div class="history-row">
-
-                                                        <span class="history-label">
-                                                            Note
-                                                        </span>
-
-                                                        <span class="history-value">
-                                                            {{ call.note }} - {{ call.called_at|date:"d M Y, h:i A" }}
-                                                        </span>
-
-                                                    </div>
-
-                                                {% endif %}
-
-                                            </div>
-
-                                        {% endfor %}
-
-                                    </div>
-
-                                {% else %}
-
-                                    <div class="history-empty">
-                                        No calling history available.
-                                    </div>
-
-                                {% endif %}
-
-                            {% endwith %}
+                        {% endif %}
 
                         </div>
 

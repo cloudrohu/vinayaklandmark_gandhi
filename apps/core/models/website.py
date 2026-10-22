@@ -6,6 +6,7 @@ from django.utils.safestring import mark_safe
 from django_ckeditor_5.fields import CKEditor5Field
 from apps.properties.models import Project
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 class BaseModel(models.Model):
     id = models.UUIDField(
@@ -319,17 +320,14 @@ class Enquiry(BaseModel):
         return f"{self.name or 'Unknown'} - {self.phone or 'No Phone'}"
 
 
-
-
 class Inquiry(BaseModel):
-
-    
 
     ENQUIRY_STATUS_CHOICES = [
         ("New", "New"),
         ("FollowUp", "Follow Up"),
         ("Not Received", "Not Received"),
         ("Qualified", "Qualified"),
+        ("NotQualified", "Not Qualified"),
     ]
 
     Enquiry_status = models.CharField(
@@ -341,14 +339,16 @@ class Inquiry(BaseModel):
     )
 
     project = models.ForeignKey(
-            Project,
-            on_delete=models.SET_NULL,
-            null=True,
-            blank=True,
-            related_name="inquiries"
-        )
+        Project,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="inquiries"
+    )
 
-    name = models.CharField(max_length=150)
+    name = models.CharField(
+        max_length=150
+    )
 
     phone = models.CharField(
         max_length=15,
@@ -364,6 +364,11 @@ class Inquiry(BaseModel):
         null=True
     )
 
+    call_comment = models.TextField(
+        blank=True,
+        null=True
+    )
+
     created_at = models.DateTimeField(
         auto_now_add=True
     )
@@ -372,47 +377,28 @@ class Inquiry(BaseModel):
         auto_now_add=True
     )
 
+
+    def clean(self):
+
+        super().clean()
+
+        if self.Enquiry_status == "NotQualified":
+
+            if not self.call_comment or not self.call_comment.strip():
+
+                raise ValidationError({
+                    "call_comment": "Call Comment is required when enquiry status is Not Qualified."
+                })
+
+
     def __str__(self):
         return f"{self.name} - {self.phone}"
+
 
     class Meta:
         verbose_name = "Project Enquiry"
         verbose_name_plural = "3. Project Enquiries"
         ordering = ["-created_at"]
-
-
-
-class EnquiryCalling(BaseModel):
-
-    enquiry = models.ForeignKey(
-        Inquiry,
-        on_delete=models.CASCADE,
-        related_name="calling_history"
-    )
-
-    called_at = models.DateTimeField(
-        default=timezone.now
-    )
-
-
-    note = models.TextField(
-        blank=True,
-        null=True
-    )
-
-    def __str__(self):
-        return (
-            f"{self.enquiry.name} - "
-            f"{self.called_at:%d %b %Y %I:%M %p}"
-        )
-
-    class Meta:
-        verbose_name = "Enquiry Calling"
-        verbose_name_plural = "Enquiry Calling History"
-        ordering = ["-called_at"]
-
-
-
 
 class PriceBreakupInquiry(models.Model):
     project = models.ForeignKey(Project,on_delete=models.SET_NULL,null=True,blank=True,related_name="price_breakup_inquiries")
