@@ -430,7 +430,7 @@ class InquiryAdmin(admin.ModelAdmin):
         "-id",
     )
 
-    list_per_page = 3
+    list_per_page = 24
 
     # =====================================================
     # CHANGE LIST CONTEXT
