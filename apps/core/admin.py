@@ -3,6 +3,13 @@ from django.utils.html import format_html
 from django.contrib import admin
 from django.db.models import OuterRef, Subquery
 
+from django.contrib import admin
+from django.db.models import OuterRef, Subquery,Count
+
+
+# =========================================================
+# ENQUIRY CALLING HISTORY INLINE
+# =========================================================
 
 
 from .models.website import (
@@ -378,13 +385,6 @@ class EnquiryInline(BaseSettingInline):
 
     extra = 0
 
-from django.contrib import admin
-from django.db.models import OuterRef, Subquery,Count
-
-
-# =========================================================
-# ENQUIRY CALLING HISTORY INLINE
-# =========================================================
 
 class EnquiryCallingInline(admin.TabularInline):
     model = EnquiryCalling
@@ -472,7 +472,7 @@ class InquiryAdmin(admin.ModelAdmin):
         "-contacted_on",
     )
 
-    list_per_page = 30
+    list_per_page = 20
 
     # -----------------------------------------------------
     # INLINE

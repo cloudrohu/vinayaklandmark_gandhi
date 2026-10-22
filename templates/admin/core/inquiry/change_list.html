@@ -1,5 +1,5 @@
 {% extends "admin/base_site.html" %}
-{% load static %}
+{% load static admin_list %}
 
 
 {% block title %}
@@ -525,6 +525,60 @@
 
     }
 
+    /* =========================================================
+   PAGINATION
+   ========================================================= */
+
+.inquiry-pagination {
+    margin-top: 20px;
+    padding: 14px 16px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+}
+
+/* Django Admin pagination */
+
+.inquiry-pagination .paginator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin: 0;
+}
+
+.inquiry-pagination .paginator a,
+.inquiry-pagination .paginator span {
+    min-width: 34px;
+    height: 34px;
+    padding: 0 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+    background: #ffffff;
+    color: #374151;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.inquiry-pagination .paginator a:hover {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff;
+}
+
+.inquiry-pagination .paginator .this-page {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff;
+    font-weight: 600;
+}
+
 </style>
 
 {% endblock %}
@@ -921,12 +975,26 @@
         </div>
 
 
+            </div>
+
+        <!-- =====================================================
+             PAGINATION
+             ===================================================== -->
+
+        {% if cl.result_count > cl.list_per_page %}
+
+            <div class="inquiry-pagination">
+
+                {% pagination cl %}
+
+            </div>
+
+        {% endif %}
+
     {% else %}
 
         <div class="inquiry-empty">
-
             No enquiries found.
-
         </div>
 
     {% endif %}
