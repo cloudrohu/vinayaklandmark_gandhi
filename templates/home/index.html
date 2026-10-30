@@ -333,76 +333,64 @@
 
 </section>
 
-
 {% if why_choose %}
 <section id="why-choose" class="relative bg-[#f8f7f4] py-20 sm:py-24 lg:py-28 overflow-hidden">
 
-    <div class="max-w-[1500px] mx-auto px-5 sm:px-7 lg:px-10">
+    <div class="max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-10">
 
-        <div class="max-w-3xl mb-12 lg:mb-16">
+        <!-- Heading -->
+        <div class="max-w-3xl mb-14 lg:mb-20">
 
             <div class="flex items-center gap-3 mb-5">
-
-                <span class="w-9 h-px bg-[#a8874b]"></span>
-
-                <span class="text-[11px] font-medium tracking-[0.28em] uppercase text-[#a8874b]">
-                    Why Choose Us
+                <span class="w-10 h-px bg-[#b89252]"></span>
+                <span class="text-[#b89252] text-xs sm:text-sm font-semibold tracking-[0.25em] uppercase">
+                    Why {{project_obj.project_name}}
                 </span>
-
             </div>
 
-            <h2 class="luxury-font text-4xl sm:text-5xl lg:text-6xl leading-[1.08] text-neutral-900">
-                Everything You Need
-                <br>
-                <span class="italic font-normal text-neutral-500">
-                    For Exceptional Living
-                </span>
+            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#222222] leading-[1.1] tracking-tight">
+                Designed for a
+                <span class="text-[#b89252]">better way of living.</span>
             </h2>
+
+            <p class="mt-5 text-gray-600 text-base sm:text-lg leading-7 max-w-2xl">
+                 {{project_obj.project_name}} brings together a prime location, spacious residences,
+                thoughtful amenities and everyday convenience for a refined lifestyle in Kudasan.
+            </p>
 
         </div>
 
-        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-black/10 border border-black/10">
 
-            {% for rs in why_choose %}
-            <div class="group bg-white p-7 sm:p-9 lg:p-10 hover:bg-neutral-900 transition-all duration-500">
+        <!-- USP Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-0 border-t border-gray-200">
 
-                <div class="flex items-start justify-between">
+            {% for rs in why_choose %}  
+            <div class="group py-8 lg:py-10 border-b border-gray-200">
 
-                    <div class="w-12 h-12 flex items-center justify-center border border-black/10 group-hover:border-white/20 transition-all duration-500">
-                        <i class="{{rs.icons}} text-[#a8874b] text-sm"></i>
+                <div class="flex items-start gap-5">
+
+                    <div class="shrink-0 w-12 h-12 rounded-full border border-[#d6b77a]  flex items-center justify-center text-[#b89252]">
+                        <i class="{{rs.icons}} text-lg"></i>
                     </div>
 
-                    <span class="text-[10px] tracking-[0.2em] text-neutral-400 group-hover:text-white/30">
-                        {{ forloop.counter|stringformat:"02d" }}
-                    </span>
+                    <div>
+                        <span class="text-xs text-gray-400 tracking-widest">
+                             {{ forloop.counter|stringformat:"02d" }}
+                        </span>
+
+                        <h3 class="mt-1 text-lg font-semibold text-[#222222]">
+                            {{rs.title}}
+                        </h3>
+
+                        <p class="mt-2 text-sm leading-6 text-gray-500">
+                            {{rs.subtitle}}
+                        </p>
+                    </div>
 
                 </div>
 
-                <h3 class="luxury-font text-2xl mt-9 text-neutral-900 group-hover:text-white transition-colors duration-500">
-                    {{rs.title}}
-                </h3>
-
-                <p class="mt-4 text-sm leading-6 text-neutral-500 group-hover:text-white/60 transition-colors duration-500">
-                    {{rs.subtitle}}
-                </p>
-
             </div>
-            {% endfor %}
-
-        </div>
-
-        <div class="mt-10 flex justify-end">
-
-            <a href="#project-details"
-               class="group inline-flex items-center gap-4 text-[11px] font-medium tracking-[0.18em] uppercase text-neutral-700 hover:text-[#a8874b] transition-colors duration-300">
-
-                Discover The Difference
-
-                <span class="w-9 h-9 border border-black/10 flex items-center justify-center group-hover:border-[#a8874b] transition-all duration-300">
-                    <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                </span>
-
-            </a>
+             {% endfor %}
 
         </div>
 
@@ -411,96 +399,106 @@
 </section>
 {% endif %}
 
-<section id="usp" class="relative bg-[#f5f3ef] py-14 sm:py-16 lg:py-20 overflow-hidden">
+<section id="usp" class="relative bg-[#f7f5f0] py-14 sm:py-16 lg:py-20 overflow-hidden">
 
-    <div class="max-w-[1500px] mx-auto px-5 sm:px-7 lg:px-10">
+    <div class="max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-10">
 
-        <div class="grid lg:grid-cols-[0.85fr_1.15fr] gap-10 lg:gap-16 xl:gap-20 items-center">
+        <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 
-            <div class="relative">
+            <!-- LEFT VISUAL -->
+            <div class="lg:col-span-5 relative">
 
-                <div class="h-[360px] sm:h-[420px] lg:h-[480px] overflow-hidden">
+                <div class="relative aspect-[4/4.5] sm:aspect-[5/5.5] overflow-hidden">
 
-                    <img src="{{settings_obj.offer_img.url}}" alt="{{settings_obj.site_name}}" class="w-full h-full object-cover">
+                    <img src="{{project_obj.image.url}}" alt=" {{project_obj.project_name}}" class="w-full h-full object-cover">
+
+                    <div class="absolute inset-0 bg-black/5"></div>
 
                 </div>
 
-                <div class="absolute left-4 sm:left-6 bottom-4 sm:bottom-6 bg-white px-5 sm:px-6 py-4">
+                <!-- Vertical Text -->
+                <div class="absolute left-[-16px] sm:left-[-20px] bottom-6 hidden sm:block">
 
-                    <p class="text-[9px] uppercase tracking-[0.2em] text-neutral-400">
-                        A Better Way
-                    </p>
-
-                    <p class="luxury-font text-xl mt-1 text-neutral-900">
-                        To Live
-                    </p>
+                    <span class="text-[9px] tracking-[0.4em] text-gray-400 uppercase [writing-mode:vertical-rl] rotate-180">
+                        {{project_obj.project_name}}
+                    </span>
 
                 </div>
 
             </div>
 
-            <div>
 
+            <!-- RIGHT CONTENT -->
+            <div class="lg:col-span-7 lg:pl-4 xl:pl-8">
+
+                <!-- Eyebrow -->
                 <div class="flex items-center gap-3 mb-4">
 
-                    <span class="w-7 h-px bg-[#a8874b]"></span>
+                    <span class="w-8 h-px bg-[#b89252]"></span>
 
-                    <span class="text-[10px] font-medium tracking-[0.25em] uppercase text-[#a8874b]">
-                        Our Unique Selling Proposition
+                    <span class="text-[#b89252] text-[11px] font-semibold tracking-[0.25em] uppercase">
+                        Unique Selling Proposition
                     </span>
 
                 </div>
 
-                <p class="mt-4 max-w-xl text-[13px] sm:text-sm leading-6 text-neutral-600">
-                    Every element has been carefully considered to offer a
-                    sophisticated lifestyle, from the location and architecture
-                    to the smallest details of everyday living.
+
+                <!-- Heading -->
+                <h2 class="text-3xl sm:text-4xl xl:text-5xl font-semibold text-[#222222] leading-[1.05] tracking-tight">
+
+                    Designed around
+                    <span class="text-[#b89252]">
+                        you.
+                    </span>
+
+                </h2>
+
+
+                <p class="mt-4 max-w-xl text-gray-500 text-sm leading-6">
+
+                    At  {{project_obj.project_name}}, thoughtful planning meets
+                    contemporary living — creating homes that feel
+                    spacious, connected and truly yours.
+
                 </p>
 
-                <div class="mt-6 border-t border-black/10">
 
-                    {% for rs in unique_selling_proposition %}
-                    <div class="group py-4 border-b border-black/10">
+                <!-- USP 01 -->
+                {% for rs in unique_selling_proposition %}
+                <div class="mt-7 group">
 
-                        <div class="flex gap-4">
+                    <div class="flex gap-4">
 
-                            <span class="text-[10px] tracking-[0.15em] text-[#a8874b] pt-1">
-                                {{ forloop.counter|stringformat:"02d" }}
-                            </span>
+                        <span class="text-[11px] text-[#b89252] pt-1">
+                            {{ forloop.counter|stringformat:"02d" }}
+                        </span>
 
-                            <div class="flex-1">
+                        <div class="flex-1">
 
-                                <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center justify-between gap-4">
 
-                                    <h3 class="luxury-font text-lg sm:text-xl text-neutral-900">
-                                        {{rs.title}}
-                                    </h3>
+                                <h3 class="text-base sm:text-lg font-semibold text-[#222222]">
+                                    {{rs.title}}
+                                </h3>
 
-                                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-neutral-400 group-hover:text-[#a8874b]"></i>
-
-                                </div>
-
-                                <p class="mt-1.5 text-xs sm:text-[13px] leading-5 text-neutral-500">
-                                    {{rs.subtitle}}
-                                </p>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-gray-400 group-hover:text-[#b89252] transition-colors">
+                                </i>
 
                             </div>
+
+                            <p class="mt-1 text-xs sm:text-sm text-gray-500 leading-5">
+                                    {{rs.subtitle}}
+                            </p>
 
                         </div>
 
                     </div>
 
-                    {% endfor %}
+                    <div class="mt-4 h-px bg-gray-300"></div>
 
                 </div>
+                {% endfor %}
 
-                <a href="{% url "contact" %}" class="mt-6 inline-flex items-center gap-3 bg-neutral-900 text-white px-6 py-3.5 text-[10px] font-medium tracking-[0.16em] uppercase hover:bg-[#a8874b] transition-all duration-300">
-
-                    Book A Private Visit
-
-                    <i class="fa-solid fa-arrow-right text-[9px]"></i>
-
-                </a>
 
             </div>
 
@@ -511,102 +509,247 @@
 </section>
 
 
-<section id="amenities" class="relative overflow-hidden bg-white py-20 sm:py-24">
-    <div class="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+<section id="amenities" class="relative overflow-hidden bg-[#f8f7f4] py-16 sm:py-20 lg:py-24">
 
-        <!-- Section Heading -->
-        <div class="mx-auto max-w-2xl text-center">
-            <span class="inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.25em] uppercase text-[#a27a22]">
-                <span class="h-px w-8 bg-[#c89b2c]"></span>
-                Lifestyle & Comfort
-                <span class="h-px w-8 bg-[#c89b2c]"></span>
-            </span>
+    <div class="mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-10">
 
-            <h2 class="mt-4 text-3xl font-semibold tracking-tight text-neutral-900 sm:text-4xl lg:text-5xl">
-                Premium Amenities
-            </h2>
+        <!-- HEADER -->
+        <div class="flex flex-col lg:flex-row lg:items-end
+                    justify-between gap-6 mb-10 lg:mb-12">
 
-            <p class="mt-4 text-sm text-neutral-500 sm:text-base">
-                Experience thoughtfully designed spaces crafted for comfort, wellness and everyday living.
-            </p>
+            <div>
+
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="w-8 h-px bg-[#b89252]"></span>
+
+                    <span class="text-[#b89252] text-[11px] font-semibold
+                                 tracking-[0.25em] uppercase">
+                        Lifestyle & Comfort
+                    </span>
+                </div>
+
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl
+                           font-semibold tracking-tight
+                           text-[#222222]">
+                    Amenities designed
+                    <span class="text-[#b89252]">
+                        for living.
+                    </span>
+                </h2>
+
+            </div>
+
+
+            <div class="lg:max-w-md">
+
+                <p class="text-sm sm:text-base text-gray-500 leading-6">
+                    Thoughtfully planned spaces that bring comfort,
+                    recreation and everyday convenience closer to home.
+                </p>
+
+            </div>
+
         </div>
 
-        {% with total_amenities=project_obj.amenities.all.count %}
-        
-        <!-- Slider Container -->
-        <div class="relative mt-12 sm:mt-14">
 
+        {% with total_amenities=project_obj.amenities.all.count %}
+
+        <!-- SLIDER -->
+        <div class="relative">
+
+            <!-- PREVIOUS -->
             {% if total_amenities > 1 %}
-            <button type="button" 
-                    id="amenitiesPrev" 
-                    class="absolute -left-3 sm:-left-5 top-1/2 z-20 -translate-y-1/2 items-center justify-center rounded-full border border-neutral-200 bg-white shadow-lg text-neutral-700 transition hover:bg-[#c89b2c] hover:text-white hover:border-[#c89b2c] w-10 h-10 sm:w-11 sm:h-11
-                    {% if total_amenities <= 5 %}lg:hidden{% else %}lg:flex{% endif %}
-                    {% if total_amenities <= 3 %}sm:hidden{% else %}sm:flex{% endif %}
-                    flex">
-                <i class="fa-solid fa-chevron-left text-xs sm:text-sm"></i>
+
+            <button
+                type="button"
+                id="amenitiesPrev"
+                aria-label="Previous amenities"
+                class="absolute left-0 sm:-left-3 lg:-left-5
+                       top-1/2 -translate-y-1/2 z-20
+                       w-9 h-9 sm:w-10 sm:h-10
+                       flex items-center justify-center
+                       bg-white border border-gray-200
+                       text-gray-600
+                       hover:bg-[#b89252]
+                       hover:text-white
+                       hover:border-[#b89252]
+                       transition-all duration-300
+                       {% if total_amenities <= 5 %}lg:hidden{% endif %}
+                       {% if total_amenities <= 3 %}sm:hidden{% endif %}">
+
+                <i class="fa-solid fa-arrow-left text-xs"></i>
+
             </button>
+
             {% endif %}
 
-            <!-- Slider Track: Desktop (1/5 ~ 18.2%), Tablet (1/3 ~ 31%), Mobile (100% ~ 85%) -->
+
+            <!-- TRACK -->
             <div id="amenitiesSlider"
-                 class="scrollbar-hide flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-1 py-4 sm:gap-5 lg:gap-6">
+                 class="scrollbar-hide flex
+                        snap-x snap-mandatory
+                        gap-0 overflow-x-auto
+                        scroll-smooth
+                        border-t border-b border-gray-300">
 
                 {% for item in project_obj.amenities.all %}
-                    <div class="amenity-card group w-[85%] shrink-0 snap-center sm:w-[31%] lg:w-[18.2%]">
-                        <div class="flex flex-col items-center justify-center rounded-3xl border border-neutral-200/80 bg-white p-6 sm:p-7 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#c89b2c]/40 hover:shadow-xl hover:shadow-[#c89b2c]/10">
-                            
-                            <!-- Icon Container -->
-                            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#faf8f4] text-[#c89b2c] transition-all duration-300 group-hover:scale-110 group-hover:bg-[#c89b2c] group-hover:text-white">
-                                <i class="{{ item.amenities.icon|default:'fa-solid fa-star' }} text-2xl"></i>
-                            </div>
 
-                            <!-- Title -->
-                            <h3 class="mt-4 text-sm sm:text-base font-semibold text-neutral-900 transition-colors duration-300 group-hover:text-[#a27a22]">
-                                {{ item.amenities.title }}
-                            </h3>
+                <div class="amenity-card group
+                            w-[82%] shrink-0 snap-start
+                            sm:w-[33.333%]
+                            lg:w-[20%]">
+
+                    <div class="relative h-full
+                                px-6 py-7 sm:px-7 sm:py-8
+                                border-r border-gray-300
+                                transition-all duration-300
+                                hover:bg-white">
+
+                        <!-- Number -->
+                        <div class="flex items-start justify-between">
+
+                            <span class="text-[11px]
+                                         tracking-widest
+                                         text-gray-400">
+                                {{ forloop.counter|stringformat:"02d" }}
+                            </span>
+
+                            <i class="{{ item.amenities.icon|default:'fa-solid fa-star' }}
+                                      text-[#b89252] text-lg
+                                      transition-transform duration-300
+                                      group-hover:scale-110">
+                            </i>
 
                         </div>
+
+
+                        <!-- Title -->
+                        <h3 class="mt-12 sm:mt-14
+                                   text-base sm:text-lg
+                                   font-semibold
+                                   text-[#222222]
+                                   leading-snug
+                                   group-hover:text-[#b89252]
+                                   transition-colors duration-300">
+
+                            {{ item.amenities.title }}
+
+                        </h3>
+
+
+                        <!-- Bottom Line -->
+                        <div class="mt-5 flex items-center gap-3">
+
+                            <span class="w-6 h-px bg-[#b89252]
+                                         transition-all duration-300
+                                         group-hover:w-10">
+                            </span>
+
+                            <span class="text-[10px] uppercase
+                                         tracking-widest
+                                         text-gray-400">
+                                {{project_obj.project_name}}
+                            </span>
+
+                        </div>
+
                     </div>
+
+                </div>
+
                 {% empty %}
-                    <p class="w-full py-8 text-center text-neutral-500">
-                        No amenities available.
-                    </p>
+
+                <div class="w-full py-12 text-center text-gray-500">
+                    No amenities available.
+                </div>
+
                 {% endfor %}
 
             </div>
 
+
+            <!-- NEXT -->
             {% if total_amenities > 1 %}
-            <button type="button" 
-                    id="amenitiesNext" 
-                    class="absolute -right-3 sm:-right-5 top-1/2 z-20 -translate-y-1/2 items-center justify-center rounded-full border border-neutral-200 bg-white shadow-lg text-neutral-700 transition hover:bg-[#c89b2c] hover:text-white hover:border-[#c89b2c] w-10 h-10 sm:w-11 sm:h-11
-                    {% if total_amenities <= 5 %}lg:hidden{% else %}lg:flex{% endif %}
-                    {% if total_amenities <= 3 %}sm:hidden{% else %}sm:flex{% endif %}
-                    flex">
-                <i class="fa-solid fa-chevron-right text-xs sm:text-sm"></i>
+
+            <button
+                type="button"
+                id="amenitiesNext"
+                aria-label="Next amenities"
+                class="absolute right-0 sm:-right-3 lg:-right-5
+                       top-1/2 -translate-y-1/2 z-20
+                       w-9 h-9 sm:w-10 sm:h-10
+                       flex items-center justify-center
+                       bg-white border border-gray-200
+                       text-gray-600
+                       hover:bg-[#b89252]
+                       hover:text-white
+                       hover:border-[#b89252]
+                       transition-all duration-300
+                       {% if total_amenities <= 5 %}lg:hidden{% endif %}
+                       {% if total_amenities <= 3 %}sm:hidden{% endif %}">
+
+                <i class="fa-solid fa-arrow-right text-xs"></i>
+
             </button>
+
             {% endif %}
 
         </div>
 
-        <!-- Pagination Dots -->
+
+        <!-- BOTTOM -->
         {% if total_amenities > 1 %}
-        <div id="amenitiesDots" 
-             class="mt-7 items-center justify-center gap-2
-             {% if total_amenities <= 5 %}lg:hidden{% else %}lg:flex{% endif %}
-             {% if total_amenities <= 3 %}sm:hidden{% else %}sm:flex{% endif %}
-             flex">
-            {% for item in project_obj.amenities.all %}
-                <button type="button"
-                        class="amenity-dot {% if forloop.first %}w-6 bg-[#c89b2c]{% else %}w-2 bg-neutral-300{% endif %} h-1.5 rounded-full transition-all duration-300"
-                        data-index="{{ forloop.counter0 }}">
+
+        <div class="flex items-center justify-between mt-6">
+
+            <!-- Dots -->
+            <div id="amenitiesDots"
+                 class="flex items-center gap-2
+                 {% if total_amenities <= 5 %}lg:hidden{% endif %}
+                 {% if total_amenities <= 3 %}sm:hidden{% endif %}">
+
+                {% for item in project_obj.amenities.all %}
+
+                <button
+                    type="button"
+                    aria-label="Go to amenity {{ forloop.counter }}"
+                    class="amenity-dot
+                    {% if forloop.first %}
+                        w-7 bg-[#b89252]
+                    {% else %}
+                        w-2 bg-gray-300
+                    {% endif %}
+                    h-1 rounded-full
+                    transition-all duration-300"
+                    data-index="{{ forloop.counter0 }}">
                 </button>
-            {% endfor %}
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- Counter -->
+            <div class="hidden sm:flex items-center gap-2 text-xs text-gray-400">
+
+                <span class="text-[#b89252] font-medium">
+                    {{ total_amenities|stringformat:"02d" }}
+                </span>
+
+                <span>
+                    Amenities
+                </span>
+
+            </div>
+
         </div>
+
         {% endif %}
 
         {% endwith %}
 
     </div>
+
 </section>
 
 
@@ -2137,70 +2280,71 @@
 
         if (!slider) return;
 
-        const cards = slider.children;
+        const cards = slider.querySelectorAll(".amenity-card");
+
+        if (!cards.length) return;
 
         let currentPage = 0;
 
-        function getPages() {
 
-            const maxScroll = slider.scrollWidth - slider.clientWidth;
+        function getStep() {
 
-            if (maxScroll <= 0) {
-                return 1;
-            }
+            const card = cards[0];
 
-            const firstCard = cards[0];
-
-            if (!firstCard) {
-                return 1;
-            }
-
-            const cardWidth = firstCard.offsetWidth;
+            if (!card) return 0;
 
             const gap = parseFloat(
-                getComputedStyle(slider).columnGap ||
-                getComputedStyle(slider).gap ||
-                0
+                getComputedStyle(slider).gap || 0
             );
 
-            const step = cardWidth + gap;
+            return card.offsetWidth + gap;
+        }
 
-            return Math.ceil(maxScroll / step) + 1;
+
+        function getPages() {
+
+            const step = getStep();
+
+            if (!step) return 1;
+
+            const maxScroll =
+                slider.scrollWidth - slider.clientWidth;
+
+            return Math.max(
+                1,
+                Math.ceil(maxScroll / step) + 1
+            );
         }
 
 
         function updateDots() {
 
-            const pages = getPages();
-
             dots.forEach((dot, index) => {
+
+                dot.classList.remove(
+                    "w-7",
+                    "bg-[#b89252]",
+                    "w-2",
+                    "bg-gray-300"
+                );
 
                 if (index === currentPage) {
 
-                    dot.classList.remove(
-                        "w-2",
-                        "bg-neutral-300"
-                    );
-
                     dot.classList.add(
                         "w-7",
-                        "bg-[#c89b2c]"
+                        "bg-[#b89252]"
                     );
 
                 } else {
 
-                    dot.classList.remove(
-                        "w-7",
-                        "bg-[#c89b2c]"
-                    );
-
                     dot.classList.add(
                         "w-2",
-                        "bg-neutral-300"
+                        "bg-gray-300"
                     );
                 }
 
             });
+
         }
 
 
@@ -2213,26 +2357,13 @@
                 Math.min(page, pages - 1)
             );
 
-            const firstCard = cards[0];
-
-            if (!firstCard) return;
-
-            const cardWidth = firstCard.offsetWidth;
-
-            const gap = parseFloat(
-                getComputedStyle(slider).columnGap ||
-                getComputedStyle(slider).gap ||
-                0
-            );
-
-            const step = cardWidth + gap;
-
             slider.scrollTo({
-                left: currentPage * step,
+                left: currentPage * getStep(),
                 behavior: "smooth"
             });
 
             updateDots();
+
         }
 
 
@@ -2240,13 +2371,13 @@
 
             const pages = getPages();
 
-            if (currentPage < pages - 1) {
+            if (currentPage >= pages - 1) {
 
-                goToPage(currentPage + 1);
+                goToPage(0);
 
             } else {
 
-                goToPage(0);
+                goToPage(currentPage + 1);
 
             }
 
@@ -2257,14 +2388,13 @@
 
             const pages = getPages();
 
-            if (currentPage > 0) {
+            if (currentPage <= 0) {
 
-                goToPage(currentPage - 1);
+                goToPage(pages - 1);
 
             } else {
 
-                // Loop to last
-                goToPage(pages - 1);
+                goToPage(currentPage - 1);
 
             }
 
@@ -2282,39 +2412,25 @@
         });
 
 
-        let scrollTimeout;
+        let scrollTimer;
 
         slider.addEventListener("scroll", function () {
 
-            clearTimeout(scrollTimeout);
+            clearTimeout(scrollTimer);
 
-            scrollTimeout = setTimeout(function () {
+            scrollTimer = setTimeout(function () {
 
-                const firstCard = cards[0];
+                const step = getStep();
 
-                if (!firstCard) return;
+                if (!step) return;
 
-                const cardWidth = firstCard.offsetWidth;
-
-                const gap = parseFloat(
-                    getComputedStyle(slider).columnGap ||
-                    getComputedStyle(slider).gap ||
-                    0
-                );
-
-                const step = cardWidth + gap;
-
-                if (step <= 0) return;
-
-                const newPage = Math.round(
+                currentPage = Math.round(
                     slider.scrollLeft / step
                 );
 
-                currentPage = newPage;
-
                 updateDots();
 
-            }, 80);
+            }, 100);
 
         });
 
@@ -2324,7 +2440,12 @@
             const pages = getPages();
 
             if (currentPage >= pages) {
-                currentPage = pages - 1;
+
+                currentPage = Math.max(
+                    0,
+                    pages - 1
+                );
+
             }
 
             updateDots();

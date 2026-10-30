@@ -131,22 +131,9 @@ class ProjectAmenitiesAdmin(BaseMasterAdmin):
     list_display = (
         "id",
         "title",
-        "image_preview",
     )
 
     search_fields = ("title",)
-
-    readonly_fields = ("image_preview",)
-
-    def image_preview(self, obj):
-        if obj.image:
-            return format_html(
-                '<img src="{}" width="60" style="border-radius:6px;" />',
-                obj.image.url,
-            )
-        return "-"
-
-    image_preview.short_description = "Image"
 
 
 # ==========================================================

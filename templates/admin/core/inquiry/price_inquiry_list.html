@@ -1,0 +1,1280 @@
+{% extends "admin/change_list.html" %}
+
+{% block extrastyle %}
+{{ block.super }}
+
+<style>
+    #content-main {
+        width: 100%;
+    }
+
+    #changelist {
+        width: 100%;
+    }
+
+    #changelist .results {
+        border: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    #result_list {
+        display: none !important;
+    }
+
+
+    .inquiry-dashboard {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+        width: 100%;
+    }
+
+    .inquiry-stat {
+        background: #ffffff;
+        border: 1px solid #e6e8eb;
+        border-radius: 12px;
+        padding: 13px 15px;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        min-width: 0;
+        box-shadow: 0 2px 7px rgba(0, 0, 0, 0.035);
+    }
+
+    .inquiry-stat-icon {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f4f6f8;
+        color: #555;
+        font-size: 15px;
+    }
+
+    .inquiry-stat-content {
+        min-width: 0;
+    }
+
+    .inquiry-stat-label {
+        font-size: 11px;
+        color: #777;
+        margin-bottom: 2px;
+        line-height: 1.3;
+    }
+
+    .inquiry-stat-value {
+        font-size: 20px;
+        font-weight: 700;
+        color: #222;
+        line-height: 1.2;
+    }
+
+
+    /* =========================================================
+    MAIN GRID
+    DESKTOP = 5 CARDS
+    ========================================================= */
+
+    .enquiry-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 12px;
+        width: 100%;
+        align-items: start;
+    }
+
+
+    /* =========================================================
+    ENQUIRY CARD
+    ========================================================= */
+
+    .enquiry-grid-card {
+        background: #ffffff;
+        border: 1px solid #e3e6e9;
+        border-radius: 5px;
+        padding: 12px;
+        min-width: 0;
+        width: 100%;
+        box-sizing: border-box;
+
+        box-shadow:
+            0 2px 7px rgba(0, 0, 0, 0.04);
+
+        transition:
+            transform .18s ease,
+            box-shadow .18s ease,
+            border-color .18s ease;
+    }
+
+    .enquiry-grid-card:hover {
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 7px 18px rgba(0, 0, 0, 0.08);
+
+        border-color: #d3d7dc;
+    }
+
+
+    /* =========================================================
+    CUSTOMER TOP
+    ========================================================= */
+
+    .grid-card-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 7px;
+        margin-bottom: 11px;
+        min-width: 0;
+    }
+
+    .grid-customer {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        min-width: 0;
+        flex: 1;
+    }
+
+    .grid-avatar {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+
+        border-radius: 9px;
+
+        background: #f3f4f6;
+        color: #555;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 13px;
+    }
+
+    .grid-customer-info {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .grid-customer-name {
+        font-size: 12px;
+        font-weight: 700;
+        color: #222;
+
+        line-height: 1.3;
+
+        margin-bottom: 2px;
+
+        word-break: break-word;
+        overflow-wrap: anywhere;
+    }
+
+
+    /* =========================================================
+    PHONE / EMAIL
+    ========================================================= */
+
+    .grid-contact {
+        display: block;
+
+        width: fit-content;
+        max-width: 100%;
+
+        font-size: 9px;
+
+        line-height: 1.55;
+
+        text-decoration: none !important;
+
+        word-break: break-word;
+        overflow-wrap: anywhere;
+    }
+
+    .grid-contact i {
+        width: 11px;
+        margin-right: 2px;
+        font-size: 9px;
+    }
+
+    .grid-phone {
+        color: #333 !important;
+    }
+
+    .grid-phone:hover {
+        color: #198754 !important;
+    }
+
+    .grid-email {
+        color: #666 !important;
+    }
+
+    .grid-email:hover {
+        color: #0d6efd !important;
+    }
+
+    .grid-no-email {
+        color: #999;
+    }
+
+
+    /* =========================================================
+    STATUS + COUNT
+    ========================================================= */
+
+    .grid-card-actions {
+        display: flex;
+        flex-direction: column;
+
+        align-items: flex-end;
+
+        gap: 4px;
+
+        flex-shrink: 0;
+    }
+
+    .grid-status {
+        max-width: 100%;
+    }
+
+    .inquiry-status {
+        display: inline-flex;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 3px;
+
+        padding: 4px 6px;
+
+        border-radius: 20px;
+
+        font-size: 7px;
+
+        font-weight: 700;
+
+        white-space: nowrap;
+
+        max-width: 100%;
+    }
+
+    .inquiry-status i {
+        font-size: 5px;
+    }
+
+
+    /* =========================================================
+    STATUS COLORS
+    ========================================================= */
+
+    .status-new {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .status-contacted {
+        background: #e3f2fd;
+        color: #1565c0;
+    }
+
+    .status-followup {
+        background: #fff8e1;
+        color: #f57f17;
+    }
+
+    .status-interested {
+        background: #e0f7fa;
+        color: #00838f;
+    }
+
+    .status-qualified {
+        background: #ede7f6;
+        color: #5e35b1;
+    }
+
+    .status-sitevisit {
+        background: #e8eaf6;
+        color: #3949ab;
+    }
+
+    .status-negotiation {
+        background: #fff3e0;
+        color: #ef6c00;
+    }
+
+    .status-booked {
+        background: #e8f5e9;
+        color: #1b5e20;
+    }
+
+    .status-not-interested {
+        background: #ffebee;
+        color: #c62828;
+    }
+
+    .status-not-received {
+        background: #f5f5f5;
+        color: #616161;
+    }
+
+    .status-callback {
+        background: #f3e5f5;
+        color: #7b1fa2;
+    }
+
+    .status-wrong-number {
+        background: #fbe9e7;
+        color: #d84315;
+    }
+
+    .status-no-response {
+        background: #f5f5f5;
+        color: #616161;
+    }
+
+    .status-lost {
+        background: #ffebee;
+        color: #c62828;
+    }
+
+    .status-closed {
+        background: #eceff1;
+        color: #37474f;
+    }
+
+    .status-default {
+        background: #f5f5f5;
+        color: #555;
+    }
+
+
+    /* =========================================================
+    COUNT BADGE
+    ========================================================= */
+
+    .grid-count {
+        max-width: 100%;
+    }
+
+    .grid-count-badge {
+        display: inline-flex;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 3px;
+
+        border-radius: 20px;
+
+        padding: 4px 6px;
+
+        font-size: 7px;
+
+        font-weight: 700;
+
+        white-space: nowrap;
+    }
+
+    .grid-count-badge.single {
+        background: #f1f8f4;
+        color: #287a4b;
+    }
+
+    .grid-count-badge.repeat {
+        background: #fff7e6;
+        color: #a66a00;
+    }
+
+
+    /* =========================================================
+    PROJECT
+    ========================================================= */
+
+    .grid-project {
+        background: #f8f9fa;
+
+        border: 1px solid #edf0f2;
+
+        border-radius: 9px;
+
+        padding: 8px;
+
+        margin-bottom: 9px;
+
+        min-width: 0;
+    }
+
+    .grid-project-title {
+        display: flex;
+
+        align-items: flex-start;
+
+        gap: 5px;
+
+        font-size: 10px;
+
+        font-weight: 700;
+
+        color: #222;
+
+        line-height: 1.35;
+
+        min-width: 0;
+    }
+
+    .grid-project-title i {
+        color: #666;
+
+        margin-top: 2px;
+
+        flex-shrink: 0;
+
+        font-size: 9px;
+    }
+
+    .grid-project-title span {
+        min-width: 0;
+
+        word-break: break-word;
+        overflow-wrap: anywhere;
+    }
+
+    .grid-project-subtitle {
+        margin-top: 3px;
+
+        font-size: 8px;
+
+        color: #888;
+
+        line-height: 1.3;
+    }
+
+    .grid-project-subtitle i {
+        margin-right: 2px;
+
+        font-size: 8px;
+    }
+
+
+    /* =========================================================
+    PROPERTY INFORMATION
+    ========================================================= */
+
+    .grid-property {
+        display: grid;
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+        gap: 4px;
+
+        margin-bottom: 9px;
+    }
+
+    .grid-property-item {
+        border: 1px solid #e8eaed;
+
+        border-radius: 7px;
+
+        padding: 6px;
+
+        min-width: 0;
+
+        background: #ffffff;
+    }
+
+    .grid-label {
+        display: block;
+
+        font-size: 7px;
+
+        color: #888;
+
+        margin-bottom: 2px;
+
+        line-height: 1.2;
+
+        white-space: nowrap;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+    }
+
+    .grid-label i {
+        margin-right: 2px;
+
+        font-size: 7px;
+    }
+
+    .grid-property-item strong {
+        display: block;
+
+        font-size: 8px;
+
+        color: #222;
+
+        line-height: 1.3;
+
+        word-break: break-word;
+
+        overflow-wrap: anywhere;
+    }
+
+
+    /* =========================================================
+    LAST ENQUIRY
+    ========================================================= */
+
+    .grid-last-enquiry {
+        border-top: 1px solid #e9eaec;
+
+        padding-top: 8px;
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 6px;
+
+        min-width: 0;
+
+        margin-bottom: 9px;
+    }
+
+    .grid-clock {
+        width: 23px;
+        height: 23px;
+
+        min-width: 23px;
+
+        border-radius: 6px;
+
+        background: #f5f6f7;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        color: #777;
+
+        font-size: 9px;
+    }
+
+    .grid-last-enquiry > div:last-child {
+        min-width: 0;
+    }
+
+    .grid-last-enquiry span {
+        display: block;
+
+        font-size: 7px;
+
+        color: #999;
+
+        margin-bottom: 1px;
+    }
+
+    .grid-last-enquiry strong {
+        display: block;
+
+        font-size: 8px;
+
+        color: #444;
+
+        font-weight: 600;
+
+        line-height: 1.3;
+
+        white-space: nowrap;
+    }
+
+
+    /* =========================================================
+    CTA AREA
+    ========================================================= */
+
+    .grid-card-cta {
+        display: grid;
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+        gap: 4px;
+
+        border-top: 1px solid #e9eaec;
+
+        padding-top: 8px;
+    }
+
+
+    /* =========================================================
+    CTA BUTTON
+    ========================================================= */
+
+    .grid-cta-btn {
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 3px;
+
+        min-width: 0;
+
+        padding: 7px 3px;
+
+        border-radius: 3px;
+
+        text-decoration: none !important;
+
+        font-size: 8px;
+
+        font-weight: 700;
+
+        line-height: 1;
+
+        white-space: nowrap;
+
+        transition:
+            all .15s ease;
+    }
+
+    .grid-cta-btn i {
+        font-size: 9px;
+    }
+
+
+    /* =========================================================
+    CALL
+    ========================================================= */
+
+    .grid-cta-call {
+        background: #eaf7ef;
+
+        color: #198754 !important;
+
+        border: 1px solid #cfe9d9;
+    }
+
+    .grid-cta-call:hover {
+        background: #198754;
+
+        color: #ffffff !important;
+
+        border-color: #198754;
+    }
+
+
+    /* =========================================================
+    WHATSAPP
+    ========================================================= */
+
+    .grid-cta-whatsapp {
+        background: #eafaf1;
+
+        color: #128c4a !important;
+
+        border: 1px solid #ccebd9;
+    }
+
+    .grid-cta-whatsapp:hover {
+        background: #25d366;
+
+        color: #ffffff !important;
+
+        border-color: #25d366;
+    }
+
+
+    /* =========================================================
+    EDIT
+    ========================================================= */
+
+    .grid-cta-edit {
+        background: #f1f5ff;
+
+        color: #3563c7 !important;
+
+        border: 1px solid #d8e2ff;
+    }
+
+    .grid-cta-edit:hover {
+        background: #3563c7;
+
+        color: #ffffff !important;
+
+        border-color: #3563c7;
+    }
+
+
+    /* =========================================================
+    EMPTY STATE
+    ========================================================= */
+
+    .grid-empty {
+        grid-column: 1 / -1;
+
+        background: #ffffff;
+
+        border: 1px dashed #d7dade;
+
+        border-radius: 15px;
+
+        padding: 55px 20px;
+
+        text-align: center;
+
+        color: #777;
+    }
+
+    .grid-empty-icon {
+        font-size: 35px;
+
+        color: #aaa;
+
+        margin-bottom: 12px;
+    }
+
+    .grid-empty-title {
+        font-size: 15px;
+
+        font-weight: 700;
+
+        color: #444;
+
+        margin-bottom: 4px;
+    }
+
+    .grid-empty-text {
+        font-size: 12px;
+
+        color: #999;
+    }
+
+
+    /* =========================================================
+    PAGINATION
+    ========================================================= */
+
+    #changelist .paginator {
+        margin-top: 20px;
+    }
+
+
+    /* =========================================================
+    OLD TABLE SUPPORT
+    ========================================================= */
+
+    .customer-card {
+        display: flex;
+
+        align-items: flex-start;
+
+        gap: 10px;
+    }
+
+    .customer-avatar {
+        width: 38px;
+        height: 38px;
+
+        border-radius: 9px;
+
+        background: #f3f4f6;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        color: #555;
+
+        flex-shrink: 0;
+    }
+
+    .customer-details {
+        min-width: 0;
+    }
+
+    .customer-name {
+        font-size: 13px;
+
+        font-weight: 700;
+
+        color: #222;
+
+        margin-bottom: 3px;
+    }
+
+    .customer-contact {
+        display: block;
+
+        font-size: 11px;
+
+        text-decoration: none !important;
+
+        line-height: 1.5;
+    }
+
+    .phone-link {
+        color: #333 !important;
+    }
+
+    .email-link {
+        color: #666 !important;
+    }
+
+    .no-email {
+        color: #999;
+    }
+
+
+    /* =========================================================
+    OLD PROJECT CARD
+    ========================================================= */
+
+    .project-card {
+        min-width: 150px;
+    }
+
+    .project-title {
+        display: flex;
+
+        align-items: flex-start;
+
+        gap: 7px;
+
+        font-size: 12px;
+
+        font-weight: 700;
+
+        color: #222;
+    }
+
+    .project-title i {
+        color: #666;
+    }
+
+    .project-subtitle {
+        margin-top: 4px;
+
+        font-size: 10px;
+
+        color: #888;
+    }
+
+
+    /* =========================================================
+    OLD PROPERTY CARD
+    ========================================================= */
+
+    .property-card {
+        min-width: 130px;
+    }
+
+    .property-main {
+        display: flex;
+
+        align-items: center;
+
+        gap: 6px;
+
+        font-size: 12px;
+
+        color: #222;
+    }
+
+    .property-main i {
+        color: #666;
+    }
+
+    .property-meta {
+        display: flex;
+
+        gap: 10px;
+
+        margin-top: 5px;
+
+        font-size: 10px;
+
+        color: #777;
+    }
+
+    .property-meta span {
+        white-space: nowrap;
+    }
+
+
+    /* =========================================================
+    OLD INQUIRY BADGE
+    ========================================================= */
+
+    .inquiry-badge {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 4px;
+
+        padding: 5px 8px;
+
+        border-radius: 20px;
+
+        font-size: 10px;
+
+        font-weight: 700;
+    }
+
+    .inquiry-badge.single {
+        background: #f1f8f4;
+
+        color: #287a4b;
+    }
+
+    .inquiry-badge.repeat {
+        background: #fff7e6;
+
+        color: #a66a00;
+    }
+
+
+    /* =========================================================
+    OLD LAST ENQUIRY
+    ========================================================= */
+
+    .last-enquiry {
+        display: flex;
+
+        align-items: center;
+
+        gap: 6px;
+
+        font-size: 10px;
+
+        color: #555;
+    }
+
+    .last-enquiry i {
+        color: #777;
+    }
+
+
+    /* =========================================================
+    OLD VIEW BUTTON
+    ========================================================= */
+
+    .history-btn {
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 5px;
+
+        padding: 7px 10px;
+
+        border-radius: 7px;
+
+        background: #f5f6f7;
+
+        color: #444 !important;
+
+        border: 1px solid #e3e5e7;
+
+        text-decoration: none !important;
+
+        font-size: 10px;
+
+        font-weight: 600;
+    }
+
+    .history-btn:hover {
+        background: #222;
+
+        color: #fff !important;
+
+        border-color: #222;
+    }
+
+
+    /* =========================================================
+    RESPONSIVE
+    5 → 4
+    ========================================================= */
+
+    @media (max-width: 1500px) {
+
+        .enquiry-grid {
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+        }
+
+    }
+
+
+    /* =========================================================
+    4 → 3
+    ========================================================= */
+
+    @media (max-width: 1200px) {
+
+        .enquiry-grid {
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+        }
+
+        .inquiry-dashboard {
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+        }
+
+    }
+
+
+    /* =========================================================
+    3 → 2
+    ========================================================= */
+
+    @media (max-width: 900px) {
+
+        .enquiry-grid {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+
+        .inquiry-dashboard {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+
+    }
+
+
+    /* =========================================================
+    MOBILE
+    ========================================================= */
+
+    @media (max-width: 600px) {
+
+        .enquiry-grid {
+            grid-template-columns: 1fr;
+
+            gap: 10px;
+        }
+
+        .inquiry-dashboard {
+            grid-template-columns: 1fr;
+
+            gap: 10px;
+        }
+
+        .enquiry-grid-card {
+            padding: 13px;
+        }
+
+        .grid-card-top {
+            flex-direction: row;
+        }
+
+        .grid-property {
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+        }
+
+        .grid-last-enquiry strong {
+            white-space: normal;
+        }
+
+        .grid-cta-btn {
+            padding: 8px 4px;
+
+            font-size: 9px;
+        }
+
+    }
+
+
+    /* =========================================================
+    VERY SMALL MOBILE
+    ========================================================= */
+
+    @media (max-width: 380px) {
+
+        .grid-card-top {
+            gap: 5px;
+        }
+
+        .grid-avatar {
+            width: 31px;
+            height: 31px;
+            min-width: 31px;
+        }
+
+        .grid-customer-name {
+            font-size: 11px;
+        }
+
+        .grid-card-actions {
+            gap: 3px;
+        }
+
+        .inquiry-status {
+            font-size: 6px;
+            padding: 3px 5px;
+        }
+
+        .grid-count-badge {
+            font-size: 6px;
+            padding: 3px 5px;
+        }
+
+    }
+
+
+    /* =========================================================
+    SMOOTH FONT RENDERING
+    ========================================================= */
+
+    .enquiry-grid-card,
+    .inquiry-stat {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+</style>
+
+{% endblock %}
+
+
+{% block result_list %}
+
+<div class="inquiry-dashboard">
+
+
+    <div class="inquiry-stat">
+
+        <div class="inquiry-stat-icon">
+            <i class="fa-solid fa-inbox"></i>
+        </div>
+
+        <div class="inquiry-stat-content">
+
+            <div class="inquiry-stat-label">
+                Total Enquiries
+            </div>
+
+            <div class="inquiry-stat-value">
+                {{ total_enquiries }}
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="inquiry-stat">
+
+        <div class="inquiry-stat-icon">
+            <i class="fa-solid fa-users"></i>
+        </div>
+
+        <div class="inquiry-stat-content">
+
+            <div class="inquiry-stat-label">
+                Unique Customers
+            </div>
+
+            <div class="inquiry-stat-value">
+                {{ unique_customers }}
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="inquiry-stat">
+
+        <div class="inquiry-stat-icon">
+            <i class="fa-solid fa-repeat"></i>
+        </div>
+
+        <div class="inquiry-stat-content">
+
+            <div class="inquiry-stat-label">
+                Repeat Enquiries
+            </div>
+
+            <div class="inquiry-stat-value">
+                {{ repeat_enquiries }}
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="inquiry-stat">
+
+        <div class="inquiry-stat-icon">
+            <i class="fa-solid fa-calendar-day"></i>
+        </div>
+
+        <div class="inquiry-stat-content">
+
+            <div class="inquiry-stat-label">
+                Today's Enquiries
+            </div>
+
+            <div class="inquiry-stat-value">
+                {{ today_enquiries }}
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="enquiry-grid">
+
+    {% for card in grid_cards %}
+
+        {{ card }}
+
+    {% empty %}
+
+        <div class="grid-empty">
+
+            <div class="grid-empty-icon">
+                <i class="fa-regular fa-folder-open"></i>
+            </div>
+
+            <div class="grid-empty-title">
+                No enquiries found
+            </div>
+
+            <div class="grid-empty-text">
+                Try changing your search or filters.
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+
+{% endblock %}

@@ -401,6 +401,21 @@ class Inquiry(BaseModel):
         ordering = ["-created_at"]
 
 class PriceBreakupInquiry(models.Model):
+
+    ENQUIRY_STATUS_CHOICES = [
+        ("New", "New"),
+        ("FollowUp", "Follow Up"),
+        ("Not Received", "Not Received"),
+        ("Qualified", "Qualified"),
+        ("NotQualified", "Not Qualified"),
+    ]
+
+
+    enquiry_group_id = models.UUIDField(default=uuid.uuid4,editable=False,db_index=True,)
+
+    status = models.CharField(max_length=30,choices=ENQUIRY_STATUS_CHOICES,default="New",db_index=True,)
+
+
     project = models.ForeignKey(Project,on_delete=models.SET_NULL,null=True,blank=True,related_name="price_breakup_inquiries")
 
     name = models.CharField(max_length=150)
@@ -413,6 +428,7 @@ class PriceBreakupInquiry(models.Model):
     property_price = models.CharField(max_length=100,blank=True,null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
+    
 
     def __str__(self):
         return f"{self.name} - {self.phone}"
